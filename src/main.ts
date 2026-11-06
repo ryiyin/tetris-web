@@ -3,6 +3,7 @@ import { hardDrop, restartGame, rotateCurrent, shiftLeft, shiftRight, softDrop, 
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame, type GameStatus } from './game/game';
 import { attachKeyboard, type KeyAction } from './ui/keyboard';
+import { attachGestures } from './ui/gestures';
 import { attachTouchControls, buttonAction, isActionEnabled, pauseButtonLabel } from './ui/touch';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
@@ -132,3 +133,4 @@ function dispatch(action: KeyAction): void {
 
 attachKeyboard(window, dispatch);
 attachTouchControls(controlsEl, dispatch);
+attachGestures(canvas, dispatch);
