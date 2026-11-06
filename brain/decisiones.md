@@ -38,3 +38,12 @@ Colores clásicos fijos en `PIECE_COLORS` (`src/ui/render.ts`): I cian `#00e5ff`
 
 ## 2026-11-06 - Wall kick simple y contrato de movimiento
 Al rotar (`rotatePiece`, `src/game/movement.ts`) se prueban desplazamientos horizontales `0, -1, +1, -2, +2` (constante `WALL_KICKS`) sin tablas SRS ni kicks verticales; se usa el primero que no colisione. Contrato de `moveLeft`/`moveRight`/`moveDown`/`rotatePiece`, todas `(board, piece) => Piece`: si el movimiento es posible devuelven una `Piece` nueva; si no, la MISMA referencia recibida (T06 detecta el fallo con `result === piece`). Nunca mutan ni lanzan error por movimiento imposible. Solo usan `collides`, sin reglas propias para filas negativas.
+
+## 2026-11-06 - Bolsa de 7 y tiempo inyectados
+La bolsa usa Fisher-Yates con azar inyectado (`Random = () => number`, `src/game/bag.ts`). El tiempo entra como `deltaMs` en `advance`; el reloj real (`performance`/`requestAnimationFrame`) y `Math.random` solo se usan en `src/ui/loop.ts` y `src/main.ts`. Así la lógica es determinista y se prueba sin reloj ni azar reales.
+
+## 2026-11-06 - Aparición, bloqueo inmediato y gravedad fija
+La pieza aparece en `y: 0`, con x = 4 (O) o x = 3 (resto). Se bloquea al instante (sin lock delay) cuando `moveDown` devuelve la misma referencia. Gravedad fija `GRAVITY_MS = 1000` (`src/game/constants.ts`) hasta que T09 la haga depender del nivel.
+
+## 2026-11-06 - Estado 'stopped' cuando la pieza nueva no cabe
+Si la pieza nueva colisiona al aparecer: `status: 'stopped'`, `piece: null`, el tablero conserva la última pieza y el bucle de UI deja de pedir frames. Es un adelanto mínimo; T11 lo completará (fin de juego, mensaje, reinicio).
