@@ -20,9 +20,16 @@ canvas.width = BOARD_COLS * CELL_SIZE;
 canvas.height = BOARD_ROWS * CELL_SIZE;
 
 const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
 const linesEl = document.getElementById('lines');
-if (!scoreEl || !linesEl) {
-  throw new Error('No se encontraron los elementos "score" y "lines".');
+if (!scoreEl || !levelEl || !linesEl) {
+  throw new Error('No se encontraron los elementos "score", "level" y "lines".');
+}
+
+// Escribe solo si cambió, para no saturar al lector de pantalla.
+function setText(el: HTMLElement, value: number): void {
+  const text = String(value);
+  if (el.textContent !== text) el.textContent = text;
 }
 
 const state = createGame(Math.random);
@@ -30,8 +37,9 @@ const loop = startLoop(
   state,
   (s) => {
     drawBoard(ctx, s.board, s.piece);
-    scoreEl.textContent = String(s.score);
-    linesEl.textContent = String(s.lines);
+    setText(scoreEl, s.score);
+    setText(levelEl, s.level);
+    setText(linesEl, s.lines);
   },
   Math.random,
 );

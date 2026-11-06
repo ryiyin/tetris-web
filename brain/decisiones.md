@@ -59,3 +59,10 @@ Las acciones del jugador (`shiftLeft`, `shiftRight`, `rotateCurrent`, `softDrop`
 - Pantalla: panel HTML (`#hud`, "Puntaje" y "Líneas") encima del canvas, actualizado en cada frame desde `onFrame` en `main.ts`; no se dibuja en el canvas ni se toca `render.ts`. El nivel no se muestra hasta T09.
 - Corrige la frase "no dan puntaje hasta T08" de la decisión de acciones de teclado: desde T08 la caída suave puntúa (+1 por celda) y ambas acciones suman las líneas que borren.
 - Teclado: un `keydown` con Ctrl, Alt o Meta activo se ignora (sin `preventDefault`), para no romper atajos del navegador como Alt+Flecha izquierda. Prueba en `tests/keyboard.test.ts` con un objetivo falso (sin jsdom).
+
+## 2026-11-06 - Niveles y velocidad (T09)
+- Fórmula del nivel: `level = INITIAL_LEVEL + floor(lines / LINES_PER_LEVEL)` con `LINES_PER_LEVEL = 10` (0-9 líneas = nivel 1, 10-19 = nivel 2...), sobre las líneas TOTALES (`levelForLines`, `src/game/levels.ts`). Sin tope de nivel.
+- Recálculo: solo en `lockPiece`, tras sumar `lines`. El puntaje de esa jugada usa el nivel ANTERIOR al bloqueo; el nivel nuevo aplica desde la siguiente pieza (convención clásica).
+- Curva de velocidad: `gravityMs(level) = max(MIN_GRAVITY_MS, GRAVITY_MS - (level - 1) * GRAVITY_STEP_MS)` con `GRAVITY_MS = 1000`, `GRAVITY_STEP_MS = 80`, `MIN_GRAVITY_MS = 100`. Nivel 1 = 1000 ms, 2 = 920, 5 = 680, 10 = 280, 11 = 200, 12 = 120, 13 en adelante = 100 ms. `advance` usa `gravityMs(current.level)` en cada iteración.
+- Reemplaza "gravedad fija" de la decisión de aparición y "el nivel no se muestra hasta T09" de la decisión de líneas y puntaje: el panel `#hud` (con `role="status"`) muestra Puntaje, Nivel y Líneas en columnas etiqueta/valor, y `main.ts` escribe `textContent` solo si el valor cambió.
+- Sin separador de miles (depende de la configuración regional).
