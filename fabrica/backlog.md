@@ -5,8 +5,8 @@ Estados: pendiente, en curso, en PR, publicada.
 | ID | Título | Descripción | Depende de | Estado |
 |----|--------|-------------|------------|--------|
 | T01 | Esqueleto del proyecto | Vite + TypeScript strict, estructura de carpetas según convenciones, scripts dev/build/preview/test, prueba de ejemplo en Vitest, `base: '/tetris-web/'` y canvas en blanco. `npm test` y `npm run build` en verde. | - | publicada |
-| T02 | Publicación en GitHub Pages | Workflow `.github/workflows/deploy.yml` que instala, prueba, compila y despliega al hacer push a main. Se verifica abriendo la URL publicada. | T01 | en PR |
-| T03 | Tablero y piezas | Lógica pura: tablero 10x20, 7 piezas con 4 rotaciones y colisión con bordes y celdas ocupadas. Con pruebas. | T01 | pendiente |
+| T02 | Publicación en GitHub Pages | Workflow `.github/workflows/deploy.yml` que instala, prueba, compila y despliega al hacer push a main. Se verifica abriendo la URL publicada. | T01 | publicada |
+| T03 | Tablero y piezas | Lógica pura: tablero 10x20, 7 piezas con 4 rotaciones y colisión con bordes y celdas ocupadas. Con pruebas. | T01 | en PR |
 | T04 | Dibujar el tablero | Tablero y una pieza fija dibujados en el canvas con colores por pieza. Prueba visual a mano. | T03 | pendiente |
 | T05 | Movimiento y rotación | Lógica pura: mover izquierda/derecha, rotar con wall kick simple y caída de un paso. Con pruebas de bordes. | T03 | pendiente |
 | T06 | Caída automática, bloqueo y bolsa de 7 | Bucle de juego con temporizador, bloqueo al tocar fondo o pila y bolsa aleatoria de 7. Con pruebas. | T04, T05 | pendiente |
