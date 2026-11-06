@@ -1,0 +1,22 @@
+# Secretos: nunca se suben
+.env
+.env.*
+!.env.example
+
+# Dependencias y entornos
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Compilados y temporales
+dist/
+build/
+.next/
+coverage/
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
