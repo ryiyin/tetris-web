@@ -1,8 +1,9 @@
 // Arranque: une la lógica del juego con el dibujo en el canvas.
 import { hardDrop, restartGame, rotateCurrent, shiftLeft, shiftRight, softDrop, togglePause } from './game/actions';
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
-import { createGame } from './game/game';
-import { attachKeyboard } from './ui/keyboard';
+import { createGame, type GameStatus } from './game/game';
+import { attachKeyboard, type KeyAction } from './ui/keyboard';
+import { attachTouchControls, buttonAction, isActionEnabled, pauseButtonLabel } from './ui/touch';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
 import { overlayText } from './ui/overlay';
@@ -39,6 +40,34 @@ if (!overlayEl) {
   throw new Error('No se encontró el elemento "overlay".');
 }
 
+const controlsEl = document.getElementById('controls');
+if (!controlsEl) {
+  throw new Error('No se encontró el elemento "controls".');
+}
+const controlButtons = Array.from(controlsEl.querySelectorAll<HTMLButtonElement>('button[data-action]'));
+
+// Debe coincidir con la consulta de la botonera en style.css.
+const TOUCH_QUERY = '(pointer: coarse), (hover: none)';
+const touchQuery = window.matchMedia?.(TOUCH_QUERY);
+
+// Actualiza botones (deshabilitado y texto de pausa) solo si cambió el valor.
+function updateControls(status: GameStatus): void {
+  for (const button of controlButtons) {
+    const action = buttonAction(button.dataset.action);
+    if (action === null) continue;
+    const disabled = !isActionEnabled(action, status);
+    if (button.disabled !== disabled) button.disabled = disabled;
+    if (action === 'pause') {
+      const label = pauseButtonLabel(status);
+      if (button.getAttribute('aria-label') !== label) {
+        button.setAttribute('aria-label', label);
+        const text = button.querySelector('span');
+        if (text) text.textContent = label;
+      }
+    }
+  }
+}
+
 // Escribe solo si cambió, para no saturar al lector de pantalla.
 function setText(el: HTMLElement, value: number | string): void {
   const text = String(value);
@@ -68,12 +97,14 @@ const loop = startLoop(
     setText(recordEl, best === 0 ? '—' : best);
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
-    setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }));
+    updateControls(s.status);
+    setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }, touchQuery?.matches ?? false));
   },
   Math.random,
 );
 
-attachKeyboard(window, (action) => {
+// Único despacho de acciones: lo usan el teclado y los botones táctiles.
+function dispatch(action: KeyAction): void {
   switch (action) {
     case 'left':
       loop.apply(shiftLeft);
@@ -97,4 +128,7 @@ attachKeyboard(window, (action) => {
       loop.apply((s) => restartGame(s, Math.random));
       break;
   }
-});
+}
+
+attachKeyboard(window, dispatch);
+attachTouchControls(controlsEl, dispatch);

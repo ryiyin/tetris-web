@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { attachKeyboard, keyToAction, type KeyAction } from '../src/ui/keyboard';
+import { attachKeyboard, isRepeatable, keyToAction, type KeyAction } from '../src/ui/keyboard';
 
 type FakeEvent = {
   key: string;
@@ -97,5 +97,12 @@ describe('tecla Enter (reinicio)', () => {
     const prevent = press('Enter', { [mod]: true });
     expect(actions).toEqual([]);
     expect(prevent).not.toHaveBeenCalled();
+  });
+});
+
+describe('isRepeatable', () => {
+  it('solo izquierda, derecha y bajar repiten', () => {
+    const all: KeyAction[] = ['left', 'right', 'rotate', 'softDrop', 'hardDrop', 'pause', 'restart'];
+    expect(all.filter(isRepeatable)).toEqual(['left', 'right', 'softDrop']);
   });
 });

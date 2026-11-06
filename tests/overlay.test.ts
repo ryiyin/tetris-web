@@ -13,6 +13,28 @@ describe('overlayText', () => {
   });
 });
 
+describe('overlayText táctil', () => {
+  it('pausa', () => {
+    expect(overlayText('paused', undefined, true)).toBe('Pausa\nToca Continuar');
+  });
+  it('fin del juego', () => {
+    expect(overlayText('stopped', undefined, true)).toBe('Fin del juego\nToca Reiniciar');
+  });
+  it('con récord', () => {
+    expect(overlayText('stopped', { best: 500, isNew: true }, true)).toBe(
+      'Fin del juego\n¡Nuevo récord!\nToca Reiniciar',
+    );
+    expect(overlayText('stopped', { best: 500, isNew: false }, true)).toBe(
+      'Fin del juego\nRécord: 500\nToca Reiniciar',
+    );
+    expect(overlayText('stopped', { best: 0, isNew: false }, true)).toBe('Fin del juego\nToca Reiniciar');
+  });
+  it('jugando no muestra nada y touch=false conserva los textos', () => {
+    expect(overlayText('playing', undefined, true)).toBe('');
+    expect(overlayText('paused', undefined, false)).toBe('Pausa\nP para continuar');
+  });
+});
+
 describe('overlayText con récord', () => {
   it('nuevo récord', () => {
     expect(overlayText('stopped', { best: 500, isNew: true })).toBe(

@@ -2,7 +2,7 @@
 export type KeyAction = 'left' | 'right' | 'rotate' | 'softDrop' | 'hardDrop' | 'pause' | 'restart';
 
 // Teclas que se repiten al mantenerlas pulsadas.
-const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
+export const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
 
 export function keyToAction(key: string): KeyAction | null {
   switch (key) {
@@ -39,4 +39,9 @@ export function attachKeyboard(
     if (event.repeat && !REPEATABLE.includes(action)) return;
     onAction(action);
   });
+}
+
+// Indica si una acción se repite al mantenerla pulsada (teclado y botones táctiles).
+export function isRepeatable(action: KeyAction): boolean {
+  return REPEATABLE.includes(action);
 }
