@@ -1,5 +1,5 @@
 // Arranque: une la lógica del juego con el dibujo en el canvas.
-import { hardDrop, rotateCurrent, shiftLeft, shiftRight, softDrop } from './game/actions';
+import { hardDrop, rotateCurrent, shiftLeft, shiftRight, softDrop, togglePause } from './game/actions';
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame } from './game/game';
 import { attachKeyboard } from './ui/keyboard';
@@ -26,8 +26,13 @@ if (!scoreEl || !levelEl || !linesEl) {
   throw new Error('No se encontraron los elementos "score", "level" y "lines".');
 }
 
+const pauseEl = document.getElementById('pause');
+if (!pauseEl) {
+  throw new Error('No se encontró el elemento "pause".');
+}
+
 // Escribe solo si cambió, para no saturar al lector de pantalla.
-function setText(el: HTMLElement, value: number): void {
+function setText(el: HTMLElement, value: number | string): void {
   const text = String(value);
   if (el.textContent !== text) el.textContent = text;
 }
@@ -40,6 +45,7 @@ const loop = startLoop(
     setText(scoreEl, s.score);
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
+    setText(pauseEl, s.status === 'paused' ? 'Pausa' : '');
   },
   Math.random,
 );
@@ -60,6 +66,9 @@ attachKeyboard(window, (action) => {
       break;
     case 'hardDrop':
       loop.apply((s) => hardDrop(s, Math.random));
+      break;
+    case 'pause':
+      loop.apply(togglePause);
       break;
   }
 });

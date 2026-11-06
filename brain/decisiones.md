@@ -66,3 +66,10 @@ Las acciones del jugador (`shiftLeft`, `shiftRight`, `rotateCurrent`, `softDrop`
 - Curva de velocidad: `gravityMs(level) = max(MIN_GRAVITY_MS, GRAVITY_MS - (level - 1) * GRAVITY_STEP_MS)` con `GRAVITY_MS = 1000`, `GRAVITY_STEP_MS = 80`, `MIN_GRAVITY_MS = 100`. Nivel 1 = 1000 ms, 2 = 920, 5 = 680, 10 = 280, 11 = 200, 12 = 120, 13 en adelante = 100 ms. `advance` usa `gravityMs(current.level)` en cada iteración.
 - Reemplaza "gravedad fija" de la decisión de aparición y "el nivel no se muestra hasta T09" de la decisión de líneas y puntaje: el panel `#hud` (con `role="status"`) muestra Puntaje, Nivel y Líneas en columnas etiqueta/valor, y `main.ts` escribe `textContent` solo si el valor cambió.
 - Sin separador de miles (depende de la configuración regional).
+
+## 2026-11-06 - Pausa (T10)
+- Modelo de estado: `GameStatus = 'playing' | 'paused' | 'stopped'`. `'paused'` es reanudable; `'stopped'` sigue siendo final (T11). La pausa NO reutiliza `stopped` (precisa la decisión "Estado 'stopped'": el bucle se detiene solo con `stopped`, no con la pausa).
+- `togglePause(state)` en `src/game/actions.ts`: `playing -> paused`, `paused -> playing`, `stopped -> mismo estado`. Solo cambia `status` (conserva `dropTimer`, pieza, tablero y puntaje). `advance`, `tick` y las demás acciones ya devuelven el mismo estado si `status !== 'playing'`, lo que cubre la pausa sin cambios.
+- Bucle: sigue pidiendo frames mientras `status !== 'stopped'`. En pausa redibuja y actualiza `last`, así la pausa no cuenta como tiempo y al reanudar no hay caída brusca.
+- Teclado: `p`/`P` -> `'pause'` (usa `event.key`); no es repetible, `event.repeat` se ignora; Ctrl/Alt/Meta se ignoran como siempre.
+- Aviso: elemento HTML `<div id="pause" role="status">` (siempre en el DOM, vacío), no canvas. `main.ts` escribe `textContent` "Pausa" si está pausado y `''` si no, solo cuando cambia. CSS: velo absoluto sobre el área del canvas (`top: var(--hud-height)`), `rgba(0,0,0,0.7)`, texto blanco, `pointer-events: none`, `#pause:empty { display: none }`. El tablero queda visible bajo el velo.

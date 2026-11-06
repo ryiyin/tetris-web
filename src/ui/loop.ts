@@ -23,7 +23,9 @@ export function startLoop(
     last = ts;
     state = advance(state, delta, random);
     onFrame(state);
-    if (state.status === 'playing') requestAnimationFrame(frame);
+    // En pausa se sigue pidiendo frames: así se redibuja y `last` se mantiene al día,
+    // y al reanudar el delta es de ~1 frame. Solo 'stopped' (fin) detiene el bucle.
+    if (state.status !== 'stopped') requestAnimationFrame(frame);
   };
 
   requestAnimationFrame(frame);

@@ -5,8 +5,9 @@ import {
   shiftLeft,
   shiftRight,
   softDrop,
+  togglePause,
 } from '../src/game/actions';
-import { createGame, type GameState } from '../src/game/game';
+import { advance, tick, createGame, type GameState } from '../src/game/game';
 import { createBoard, placePiece, type Board } from '../src/game/board';
 import type { Piece } from '../src/game/board';
 
@@ -200,5 +201,46 @@ describe('estado detenido o sin pieza', () => {
       expect(softDrop(s, random)).toBe(s);
       expect(hardDrop(s, random)).toBe(s);
     }
+  });
+});
+
+describe('togglePause', () => {
+  const piece: Piece = { type: 'T', rotation: 0, x: 3, y: 5 };
+
+  it('alterna playing -> paused -> playing', () => {
+    const s = withPiece(piece);
+    const paused = togglePause(s);
+    expect(paused.status).toBe('paused');
+    expect(togglePause(paused).status).toBe('playing');
+  });
+
+  it('en stopped devuelve la misma referencia', () => {
+    const s = withPiece(null, { status: 'stopped' });
+    expect(togglePause(s)).toBe(s);
+  });
+
+  it('solo cambia status', () => {
+    const s = withPiece(piece, { dropTimer: 450, score: 70, lines: 3, level: 1 });
+    expect(togglePause(togglePause(s))).toEqual(s);
+    expect(togglePause(s)).toEqual({ ...s, status: 'paused' });
+  });
+
+  it('en pausa nada cambia (misma referencia)', () => {
+    const p = togglePause(withPiece(piece));
+    expect(advance(p, 5_000_000, random)).toBe(p);
+    expect(advance(p, 16, random)).toBe(p);
+    expect(tick(p, random)).toBe(p);
+    expect(shiftLeft(p)).toBe(p);
+    expect(shiftRight(p)).toBe(p);
+    expect(rotateCurrent(p)).toBe(p);
+    expect(softDrop(p, random)).toBe(p);
+    expect(hardDrop(p, random)).toBe(p);
+  });
+
+  it('tras reanudar un delta pequeño no hace caer la pieza', () => {
+    const p = togglePause(withPiece(piece, { dropTimer: 0 }));
+    advance(p, 30_000, random);
+    const resumed = advance(togglePause(p), 16, random);
+    expect(resumed.piece).toEqual(piece);
   });
 });

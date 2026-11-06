@@ -1,5 +1,5 @@
 // Captura del teclado: traduce teclas a acciones del juego.
-export type KeyAction = 'left' | 'right' | 'rotate' | 'softDrop' | 'hardDrop';
+export type KeyAction = 'left' | 'right' | 'rotate' | 'softDrop' | 'hardDrop' | 'pause';
 
 // Teclas que se repiten al mantenerlas pulsadas.
 const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
@@ -16,6 +16,9 @@ export function keyToAction(key: string): KeyAction | null {
       return 'softDrop';
     case ' ':
       return 'hardDrop';
+    case 'p':
+    case 'P':
+      return 'pause';
     default:
       return null;
   }
