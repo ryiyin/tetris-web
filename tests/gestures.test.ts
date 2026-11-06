@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { createGestureTracker } from '../src/ui/gestures';
+import { readFileSync } from 'node:fs';
+import { vi } from 'vitest';
+import { attachGestures, createGestureTracker } from '../src/ui/gestures';
 
 const M = { cellW: 30, cellH: 30 };
 
@@ -91,5 +93,123 @@ describe('tracker: vertical', () => {
     t.start(0, 0, 0);
     t.move(60, 100);
     expect(t.end(60, 100, 150)).toEqual([]);
+  });
+});
+
+type Handler = (e: any) => void;
+
+function fakeTarget() {
+  const handlers: Record<string, Handler[]> = {};
+  return {
+    handlers,
+    addEventListener: (type: string, fn: Handler) => {
+      (handlers[type] ??= []).push(fn);
+    },
+    fire(type: string, e: object = {}) {
+      for (const fn of handlers[type] ?? []) fn(e);
+    },
+  };
+}
+
+function setup(captureThrows = false) {
+  const canvas = Object.assign(fakeTarget(), {
+    getBoundingClientRect: () => ({ width: 300, height: 600, left: 0, top: 0 }),
+    setPointerCapture: vi.fn(() => {
+      if (captureThrows) throw new Error('x');
+    }),
+  });
+  const win = fakeTarget();
+  const doc = Object.assign(fakeTarget(), { hidden: false });
+  const onAction = vi.fn();
+  attachGestures(canvas as any, onAction, win as any, doc as any);
+  const ev = (o: object) => ({ pointerType: 'touch', pointerId: 1, clientX: 50, clientY: 50, timeStamp: 0, preventDefault: vi.fn(), ...o });
+  return { canvas, win, doc, onAction, ev };
+}
+
+describe('attachGestures', () => {
+  it('ignora el ratón', () => {
+    const s = setup();
+    const down = s.ev({ pointerType: 'mouse' });
+    s.canvas.fire('pointerdown', down);
+    s.canvas.fire('pointerup', s.ev({ pointerType: 'mouse', timeStamp: 50 }));
+    expect(down.preventDefault).not.toHaveBeenCalled();
+    expect(s.canvas.setPointerCapture).not.toHaveBeenCalled();
+    expect(s.onAction).not.toHaveBeenCalled();
+  });
+  it('toque: preventDefault, captura y rotate una vez', () => {
+    const s = setup();
+    const down = s.ev({});
+    s.canvas.fire('pointerdown', down);
+    expect(down.preventDefault).toHaveBeenCalled();
+    expect(s.canvas.setPointerCapture).toHaveBeenCalledWith(1);
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 100 }));
+    expect(s.onAction).toHaveBeenCalledTimes(1);
+    expect(s.onAction).toHaveBeenCalledWith('rotate');
+  });
+  it('acepta lápiz y usa celdas del tamaño en pantalla', () => {
+    const s = setup();
+    s.canvas.fire('pointerdown', s.ev({ pointerType: 'pen', clientX: 0 }));
+    s.canvas.fire('pointermove', s.ev({ pointerType: 'pen', clientX: 31 }));
+    expect(s.onAction.mock.calls).toEqual([['right']]);
+  });
+  it('un segundo pointerId se ignora', () => {
+    const s = setup();
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.canvas.fire('pointerdown', s.ev({ pointerId: 2 }));
+    s.canvas.fire('pointerup', s.ev({ pointerId: 2, timeStamp: 50 }));
+    expect(s.onAction).not.toHaveBeenCalled();
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 100 }));
+    expect(s.onAction).toHaveBeenCalledTimes(1);
+  });
+  it('pointercancel no emite', () => {
+    const s = setup();
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.canvas.fire('pointercancel', s.ev({}));
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 50 }));
+    expect(s.onAction).not.toHaveBeenCalled();
+  });
+  it('setPointerCapture que lanza no rompe el flujo', () => {
+    const s = setup(true);
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 50 }));
+    expect(s.onAction).toHaveBeenCalledWith('rotate');
+  });
+  it('blur y visibilitychange oculto cancelan', () => {
+    const s = setup();
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.win.fire('blur');
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 50 }));
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.doc.hidden = true;
+    s.doc.fire('visibilitychange');
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 50 }));
+    expect(s.onAction).not.toHaveBeenCalled();
+  });
+  it('visibilitychange visible no cancela', () => {
+    const s = setup();
+    s.canvas.fire('pointerdown', s.ev({}));
+    s.doc.fire('visibilitychange');
+    s.canvas.fire('pointerup', s.ev({ timeStamp: 50 }));
+    expect(s.onAction).toHaveBeenCalledWith('rotate');
+  });
+  it('contextmenu se cancela y no hay click/touchstart/mousedown', () => {
+    const s = setup();
+    const e = { preventDefault: vi.fn() };
+    s.canvas.fire('contextmenu', e);
+    expect(e.preventDefault).toHaveBeenCalled();
+    for (const t of [s.canvas, s.win, s.doc]) {
+      for (const type of ['click', 'touchstart', 'mousedown']) expect(t.handlers[type]).toBeUndefined();
+    }
+  });
+});
+
+describe('CSS del canvas', () => {
+  it('conserva touch-action: none', () => {
+    const css = readFileSync('src/style.css', 'utf-8');
+    const rule = css.match(/(^|\n)canvas\s*\{([^}]*)\}/);
+    expect(rule?.[2]).toMatch(/touch-action:\s*none/);
+    expect(rule?.[2]).toMatch(/user-select:\s*none/);
+    expect(rule?.[2]).toMatch(/-webkit-touch-callout:\s*none/);
+    expect(rule?.[2]).toMatch(/-webkit-tap-highlight-color:\s*transparent/);
   });
 });

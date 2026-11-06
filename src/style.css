@@ -49,6 +49,10 @@ body {
 
 canvas {
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
   display: block;
   max-height: var(--board-max-h);
   max-width: 100vw;
@@ -121,6 +125,10 @@ canvas {
   border: 1px solid #555;
   border-radius: 0.5rem;
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;

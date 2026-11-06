@@ -1,4 +1,5 @@
 // Gestos táctiles sobre el canvas: la lógica pura (tracker) y el pegamento con Pointer Events.
+import { BOARD_COLS, BOARD_ROWS } from '../game/constants';
 import type { KeyAction } from './keyboard';
 
 export const SLOP_PX = 10;
@@ -86,4 +87,63 @@ export function createGestureTracker(metrics: GestureMetrics): GestureTracker {
   }
 
   return { start, move, end, cancel };
+}
+
+// Solo Pointer Events con dedo o lápiz; el ratón se ignora (en PC se usa el teclado).
+export function attachGestures(
+  canvas: HTMLCanvasElement,
+  onAction: (action: KeyAction) => void,
+  win: Pick<Window, 'addEventListener'> = window,
+  doc: Pick<Document, 'addEventListener' | 'hidden'> = document,
+): void {
+  let tracker: GestureTracker | null = null;
+  let activeId: number | null = null;
+
+  function reset(): void {
+    tracker?.cancel();
+    tracker = null;
+    activeId = null;
+  }
+
+  function emit(actions: KeyAction[]): void {
+    for (const a of actions) onAction(a);
+  }
+
+  canvas.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+    if (activeId !== null) return;
+    event.preventDefault();
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch {
+      // Sin captura el gesto sigue funcionando dentro del canvas.
+    }
+    const rect = canvas.getBoundingClientRect();
+    tracker = createGestureTracker({ cellW: rect.width / BOARD_COLS, cellH: rect.height / BOARD_ROWS });
+    activeId = event.pointerId;
+    tracker.start(event.clientX, event.clientY, event.timeStamp);
+  });
+
+  canvas.addEventListener('pointermove', (event) => {
+    if (!tracker || event.pointerId !== activeId) return;
+    emit(tracker.move(event.clientX, event.clientY));
+  });
+
+  canvas.addEventListener('pointerup', (event) => {
+    if (!tracker || event.pointerId !== activeId) return;
+    const actions = tracker.end(event.clientX, event.clientY, event.timeStamp);
+    reset();
+    emit(actions);
+  });
+
+  canvas.addEventListener('pointercancel', (event) => {
+    if (event.pointerId === activeId) reset();
+  });
+
+  win.addEventListener('blur', reset);
+  doc.addEventListener('visibilitychange', () => {
+    if (doc.hidden) reset();
+  });
+  // Evita el menú contextual de la pulsación larga, solo en el canvas.
+  canvas.addEventListener('contextmenu', (event) => event.preventDefault());
 }
