@@ -17,3 +17,4 @@
 | 20261106-1712-record-en-localstorage | 2026-11-06 | T12 Récord en localStorage | publicada | tarea/20261106-1712-record-en-localstorage |
 | 20261106-1727-botones-tactiles | 2026-11-06 | T13 Botones táctiles | publicada | tarea/20261106-1727-botones-tactiles |
 | 20261106-1741-botones-tactiles | 2026-11-06 | T13 Botones táctiles | descartada (duplicado de #14) | - |
+| 20261106-1757-gestos-tactiles | 2026-11-06 | T14 Gestos táctiles | recibida | - |
