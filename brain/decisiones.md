@@ -20,3 +20,6 @@ Gratis y automático al hacer push a main. Exige repo público en el plan GitHub
 
 ## 2026-11-06 - Controles táctiles: botones y gestos propios
 Sin librerías. Se usan eventos pointer/touch con touch-action: none en el canvas.
+
+## 2026-11-06 - Versiones fijadas: Vite 5, Vitest 2, TypeScript 5
+Las últimas versiones (Vite 8, Vitest 5) exigen un Node más reciente que el instalado (v20.10) y Vitest no arrancaba (falta `styleText` en `node:util`). Se fijan las mayores compatibles con Node 20.10. Se puede subir de versión si se actualiza Node (>= 20.19).
