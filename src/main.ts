@@ -1,7 +1,8 @@
 // Arranque: une la lógica del juego con el dibujo en el canvas.
-import { createBoard, placePiece, type Piece } from './game/board';
+import { hardDrop, rotateCurrent, shiftLeft, shiftRight, softDrop } from './game/actions';
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame } from './game/game';
+import { attachKeyboard } from './ui/keyboard';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
 
@@ -19,4 +20,24 @@ canvas.width = BOARD_COLS * CELL_SIZE;
 canvas.height = BOARD_ROWS * CELL_SIZE;
 
 const state = createGame(Math.random);
-startLoop(state, (s) => drawBoard(ctx, s.board, s.piece), Math.random);
+const loop = startLoop(state, (s) => drawBoard(ctx, s.board, s.piece), Math.random);
+
+attachKeyboard(window, (action) => {
+  switch (action) {
+    case 'left':
+      loop.apply(shiftLeft);
+      break;
+    case 'right':
+      loop.apply(shiftRight);
+      break;
+    case 'rotate':
+      loop.apply(rotateCurrent);
+      break;
+    case 'softDrop':
+      loop.apply((s) => softDrop(s, Math.random));
+      break;
+    case 'hardDrop':
+      loop.apply((s) => hardDrop(s, Math.random));
+      break;
+  }
+});

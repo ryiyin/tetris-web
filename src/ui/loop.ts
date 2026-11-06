@@ -5,11 +5,16 @@ import type { Random } from '../game/bag';
 // Máximo de ms por frame, para no encadenar caídas al volver a la pestaña.
 const MAX_DELTA_MS = 1000;
 
+export type LoopHandle = {
+  // Aplica una acción al estado interno; se dibuja en el siguiente frame.
+  apply(action: (state: GameState) => GameState): void;
+};
+
 export function startLoop(
   initial: GameState,
   onFrame: (state: GameState) => void,
   random: Random,
-): void {
+): LoopHandle {
   let state = initial;
   let last: number | null = null;
 
@@ -22,4 +27,10 @@ export function startLoop(
   };
 
   requestAnimationFrame(frame);
+
+  return {
+    apply(action) {
+      state = action(state);
+    },
+  };
 }
