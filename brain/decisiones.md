@@ -47,3 +47,6 @@ La pieza aparece en `y: 0`, con x = 4 (O) o x = 3 (resto). Se bloquea al instant
 
 ## 2026-11-06 - Estado 'stopped' cuando la pieza nueva no cabe
 Si la pieza nueva colisiona al aparecer: `status: 'stopped'`, `piece: null`, el tablero conserva la última pieza y el bucle de UI deja de pedir frames. Es un adelanto mínimo; T11 lo completará (fin de juego, mensaje, reinicio).
+
+## 2026-11-06 - Acciones de teclado: archivo `actions.ts`, repetición y caída dura
+Las acciones del jugador (`shiftLeft`, `shiftRight`, `rotateCurrent`, `softDrop`, `hardDrop`) viven en `src/game/actions.ts` como lógica pura; devuelven el MISMO estado si no hay cambio o si el juego no está en `'playing'`. Teclas (`src/ui/keyboard.ts`): flechas izquierda/derecha mueven, arriba rota (horario), abajo caída suave, espacio caída dura; `preventDefault` solo en esas 5 teclas. Se repiten al mantener pulsado (repetición del navegador, sin temporizador propio) izquierda, derecha y abajo; arriba y espacio ignoran `event.repeat`. La caída suave equivale a un `tick` (si no puede bajar, bloquea al instante) y la caída dura baja con `moveDown` repetido, bloquea y llama a `spawnNext`; ambas ponen `dropTimer` en 0 y no dan puntaje hasta T08. `startLoop` devuelve `{ apply }` para aplicar acciones al estado que vive en el bucle; se dibuja en el siguiente frame.

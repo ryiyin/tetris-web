@@ -8,4 +8,5 @@
 | 20261106-1546-tablero-y-piezas | 2026-11-06 | T03 Tablero y piezas | publicada | tarea/20261106-1546-tablero-y-piezas |
 | 20261106-1553-dibujar-el-tablero | 2026-11-06 | T04 Dibujar el tablero | publicada | tarea/20261106-1553-dibujar-el-tablero |
 | 20261106-1608-movimiento-y-rotacion | 2026-11-06 | T05 Movimiento y rotación | publicada | tarea/20261106-1608-movimiento-y-rotacion |
-| 20261106-1614-caida-bloqueo-bolsa | 2026-11-06 | T06 Caída automática, bloqueo y bolsa de 7 | esperando aprobación humana | tarea/20261106-1614-caida-bloqueo-bolsa |
+| 20261106-1614-caida-bloqueo-bolsa | 2026-11-06 | T06 Caída automática, bloqueo y bolsa de 7 | publicada | tarea/20261106-1614-caida-bloqueo-bolsa |
+| 20261106-1628-teclado-en-pc | 2026-11-06 | T07 Teclado en PC | esperando aprobación humana | tarea/20261106-1628-teclado-en-pc |
