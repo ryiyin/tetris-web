@@ -16,7 +16,7 @@ Estados: pendiente, en curso, en PR, publicada.
 | T10 | Pausa | Tecla P para pausar y reanudar, con aviso "Pausa" en pantalla. Con pruebas. | T06 | publicada |
 | T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | publicada |
 | T12 | Récord en localStorage | Guarda y muestra el mejor puntaje. Si localStorage falla, el juego sigue sin récord. Con almacenamiento simulado. | T11 | en PR |
-| T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa y reinicio (tras el fin de juego, porque en celular no hay tecla Enter) visibles en celular. | T11 | en curso (20261106-1741-botones-tactiles) |
+| T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa y reinicio (tras el fin de juego, porque en celular no hay tecla Enter) visibles en celular. | T11 | en PR |
 | T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | pendiente |
 | T15 | Diseño adaptable | CSS responsivo para pantalla vertical, controles al alcance del pulgar. | T13 | pendiente |
 | T16 | Pulido final y verificación | Revisar los criterios del MVP en PC y celular publicado y aviso legal discreto sobre el nombre. | T02, T12, T14, T15 | pendiente |

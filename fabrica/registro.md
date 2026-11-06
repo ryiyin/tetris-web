@@ -15,4 +15,4 @@
 | 20261106-1653-pausa-con-tecla-p | 2026-11-06 | T10 Pausa | publicada | tarea/20261106-1653-pausa-con-tecla-p |
 | 20261106-1701-fin-de-juego-y-reinicio | 2026-11-06 | T11 Fin de juego y reinicio | publicada | tarea/20261106-1701-fin-de-juego-y-reinicio |
 | 20261106-1712-record-en-localstorage | 2026-11-06 | T12 Récord en localStorage | esperando aprobación humana | tarea/20261106-1712-record-en-localstorage |
-| 20261106-1741-botones-tactiles | 2026-11-06 | T13 Botones táctiles | aprobada | tarea/20261106-1741-botones-tactiles |
+| 20261106-1741-botones-tactiles | 2026-11-06 | T13 Botones táctiles | esperando aprobación humana | tarea/20261106-1741-botones-tactiles |
