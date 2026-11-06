@@ -26,6 +26,8 @@ export function attachKeyboard(
   onAction: (action: KeyAction) => void,
 ): void {
   target.addEventListener('keydown', (event) => {
+    // Con Ctrl/Alt/Meta se deja el atajo al navegador (p. ej. Alt+Flecha izquierda).
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
     const action = keyToAction(event.key);
     if (action === null) return;
     event.preventDefault();
