@@ -13,10 +13,10 @@ Estados: pendiente, en curso, en PR, publicada.
 | T07 | Teclado en PC | Flechas para mover y rotar, flecha abajo para caída suave, espacio para caída dura. | T06 | publicada |
 | T08 | Líneas y puntaje | Borrar 1 a 4 líneas y mostrar puntaje (100/300/500/800 por 1/2/3/4 líneas, por nivel, más 1 punto por celda en caída suave). Registrar en brain/decisiones.md. Con pruebas. | T06 | publicada |
 | T09 | Niveles y velocidad | El nivel sube cada 10 líneas y la caída se acelera. Se muestran nivel y líneas. Con pruebas. | T08 | publicada |
-| T10 | Pausa | Tecla P para pausar y reanudar, con aviso "Pausa" en pantalla. Con pruebas. | T06 | en PR |
-| T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | pendiente |
+| T10 | Pausa | Tecla P para pausar y reanudar, con aviso "Pausa" en pantalla. Con pruebas. | T06 | publicada |
+| T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | en PR |
 | T12 | Récord en localStorage | Guarda y muestra el mejor puntaje. Si localStorage falla, el juego sigue sin récord. Con almacenamiento simulado. | T11 | pendiente |
-| T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa visibles en celular. | T11 | pendiente |
+| T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa y reinicio (tras el fin de juego, porque en celular no hay tecla Enter) visibles en celular. | T11 | pendiente |
 | T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | pendiente |
 | T15 | Diseño adaptable | CSS responsivo para pantalla vertical, controles al alcance del pulgar. | T13 | pendiente |
 | T16 | Pulido final y verificación | Revisar los criterios del MVP en PC y celular publicado y aviso legal discreto sobre el nombre. | T02, T12, T14, T15 | pendiente |

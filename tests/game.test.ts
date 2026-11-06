@@ -231,4 +231,15 @@ describe('fin: la pieza nueva no cabe', () => {
     expect(s.status).toBe('stopped');
     expect(s.piece).toBeNull();
   });
+
+  it('conserva puntaje, líneas, nivel y tablero al terminar', () => {
+    const base = almostFull();
+    const s = tick({ ...base, score: 1234, lines: 12, level: 2 }, random);
+    expect(s.status).toBe('stopped');
+    expect(s.piece).toBeNull();
+    expect(s.score).toBe(1234);
+    expect(s.lines).toBe(12);
+    expect(s.level).toBe(2);
+    expect(s.board[0][4]).toBe('O');
+  });
 });

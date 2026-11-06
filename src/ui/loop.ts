@@ -17,6 +17,7 @@ export function startLoop(
 ): LoopHandle {
   let state = initial;
   let last: number | null = null;
+  let running = true;
 
   const frame = (ts: number): void => {
     const delta = last === null ? 0 : Math.min(ts - last, MAX_DELTA_MS);
@@ -26,6 +27,7 @@ export function startLoop(
     // En pausa se sigue pidiendo frames: así se redibuja y `last` se mantiene al día,
     // y al reanudar el delta es de ~1 frame. Solo 'stopped' (fin) detiene el bucle.
     if (state.status !== 'stopped') requestAnimationFrame(frame);
+    else running = false;
   };
 
   requestAnimationFrame(frame);
@@ -33,6 +35,13 @@ export function startLoop(
   return {
     apply(action) {
       state = action(state);
+      // Si el bucle estaba detenido (fin de juego) y la acción lo revive, se reanuda
+      // con delta 0 (last = null) y sin duplicar bucles.
+      if (!running && state.status !== 'stopped') {
+        running = true;
+        last = null;
+        requestAnimationFrame(frame);
+      }
     },
   };
 }
