@@ -12,4 +12,4 @@
 | 20261106-1628-teclado-en-pc | 2026-11-06 | T07 Teclado en PC | publicada | tarea/20261106-1628-teclado-en-pc |
 | 20261106-1635-lineas-y-puntaje | 2026-11-06 | T08 Líneas y puntaje | publicada | tarea/20261106-1635-lineas-y-puntaje |
 | 20261106-1645-niveles-y-velocidad | 2026-11-06 | T09 Niveles y velocidad | publicada | tarea/20261106-1645-niveles-y-velocidad |
-| 20261106-1653-pausa-con-tecla-p | 2026-11-06 | T10 Pausa | aprobada | tarea/20261106-1653-pausa-con-tecla-p |
+| 20261106-1653-pausa-con-tecla-p | 2026-11-06 | T10 Pausa | esperando aprobación humana | tarea/20261106-1653-pausa-con-tecla-p |
