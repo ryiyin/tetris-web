@@ -24,6 +24,7 @@
 - Toda tarea termina con `npm test` en verde.
 
 ## Comandos
+- Node requerido: >= 22.12 (por Vitest 5 y Vite 8).
 - Instalar dependencias: `npm install`
 - Ejecutar pruebas: `npm test`
 - Ejecutar en local: `npm run dev` (abre http://localhost:5173/tetris-web/)

@@ -20,4 +20,4 @@ Estados: pendiente, en curso, en PR, publicada.
 | T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | pendiente |
 | T15 | Diseño adaptable | CSS responsivo para pantalla vertical, controles al alcance del pulgar. | T13 | pendiente |
 | T16 | Pulido final y verificación | Revisar los criterios del MVP en PC y celular publicado y aviso legal discreto sobre el nombre. | T02, T12, T14, T15 | pendiente |
-| T17 | Actualizar Vite, Vitest y TypeScript | Node ya es 20.19 o más (v26.13.0). Subir Vite, Vitest y TypeScript a las versiones actuales, correr `npm audit`, dejar `npm test` y `npm run build` en verde y actualizar la decisión "Versiones fijadas" en brain/decisiones.md. | T01 | pendiente |
+| T17 | Actualizar Vite, Vitest y TypeScript | Node ya es 20.19 o más (v26.13.0). Subir Vite, Vitest y TypeScript a las versiones actuales, correr `npm audit`, dejar `npm test` y `npm run build` en verde y actualizar la decisión "Versiones fijadas" en brain/decisiones.md. | T01 | en PR |
