@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { attachKeyboard, type KeyAction } from '../src/ui/keyboard';
+import { attachKeyboard, keyToAction, type KeyAction } from '../src/ui/keyboard';
 
 type FakeEvent = {
   key: string;
@@ -45,4 +45,30 @@ describe('attachKeyboard', () => {
       expect(prevent).not.toHaveBeenCalled();
     },
   );
+});
+
+describe('tecla P (pausa)', () => {
+  it.each(['p', 'P'])('keyToAction(%s) es pause', (k) => {
+    expect(keyToAction(k)).toBe('pause');
+  });
+
+  it('llama a onAction y preventDefault', () => {
+    const { actions, press } = setup();
+    const prevent = press('p');
+    expect(actions).toEqual(['pause']);
+    expect(prevent).toHaveBeenCalledOnce();
+  });
+
+  it('con repeat no llama a onAction', () => {
+    const { actions, press } = setup();
+    press('P', { repeat: true });
+    expect(actions).toEqual([]);
+  });
+
+  it.each(['ctrlKey', 'altKey', 'metaKey'] as const)('con %s se ignora', (mod) => {
+    const { actions, press } = setup();
+    const prevent = press('p', { [mod]: true });
+    expect(actions).toEqual([]);
+    expect(prevent).not.toHaveBeenCalled();
+  });
 });

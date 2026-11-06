@@ -37,6 +37,13 @@ export function softDrop(state: GameState, random: Random): GameState {
   };
 }
 
+// Pausa/reanuda. Solo cambia status; en 'stopped' (fin) devuelve el mismo estado.
+export function togglePause(state: GameState): GameState {
+  if (state.status === 'playing') return { ...state, status: 'paused' };
+  if (state.status === 'paused') return { ...state, status: 'playing' };
+  return state;
+}
+
 // Baja la pieza hasta que no pueda más.
 function dropToBottom(state: GameState, piece: Piece): Piece {
   let current = piece;
