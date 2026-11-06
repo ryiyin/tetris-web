@@ -1,10 +1,11 @@
 // Arranque: une la lógica del juego con el dibujo en el canvas.
-import { hardDrop, rotateCurrent, shiftLeft, shiftRight, softDrop, togglePause } from './game/actions';
+import { hardDrop, restartGame, rotateCurrent, shiftLeft, shiftRight, softDrop, togglePause } from './game/actions';
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame } from './game/game';
 import { attachKeyboard } from './ui/keyboard';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
+import { overlayText } from './ui/overlay';
 
 const canvas = document.getElementById('game') as HTMLCanvasElement | null;
 if (!canvas) {
@@ -26,9 +27,9 @@ if (!scoreEl || !levelEl || !linesEl) {
   throw new Error('No se encontraron los elementos "score", "level" y "lines".');
 }
 
-const pauseEl = document.getElementById('pause');
-if (!pauseEl) {
-  throw new Error('No se encontró el elemento "pause".');
+const overlayEl = document.getElementById('overlay');
+if (!overlayEl) {
+  throw new Error('No se encontró el elemento "overlay".');
 }
 
 // Escribe solo si cambió, para no saturar al lector de pantalla.
@@ -45,7 +46,7 @@ const loop = startLoop(
     setText(scoreEl, s.score);
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
-    setText(pauseEl, s.status === 'paused' ? 'Pausa' : '');
+    setText(overlayEl, overlayText(s.status));
   },
   Math.random,
 );
@@ -69,6 +70,9 @@ attachKeyboard(window, (action) => {
       break;
     case 'pause':
       loop.apply(togglePause);
+      break;
+    case 'restart':
+      loop.apply((s) => restartGame(s, Math.random));
       break;
   }
 });

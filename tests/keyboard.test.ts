@@ -72,3 +72,30 @@ describe('tecla P (pausa)', () => {
     expect(prevent).not.toHaveBeenCalled();
   });
 });
+
+describe('tecla Enter (reinicio)', () => {
+  it('keyToAction(Enter) es restart', () => {
+    expect(keyToAction('Enter')).toBe('restart');
+  });
+
+  it('llama a onAction y preventDefault', () => {
+    const { actions, press } = setup();
+    const prevent = press('Enter');
+    expect(actions).toEqual(['restart']);
+    expect(prevent).toHaveBeenCalledOnce();
+  });
+
+  it('con repeat no llama a onAction pero sí a preventDefault', () => {
+    const { actions, press } = setup();
+    const prevent = press('Enter', { repeat: true });
+    expect(actions).toEqual([]);
+    expect(prevent).toHaveBeenCalledOnce();
+  });
+
+  it.each(['ctrlKey', 'altKey', 'metaKey'] as const)('con %s se ignora', (mod) => {
+    const { actions, press } = setup();
+    const prevent = press('Enter', { [mod]: true });
+    expect(actions).toEqual([]);
+    expect(prevent).not.toHaveBeenCalled();
+  });
+});

@@ -2,7 +2,7 @@
 // Si la acción no cambia nada, devuelven el MISMO estado (misma referencia).
 import type { Random } from './bag';
 import type { Piece } from './board';
-import { lockPiece, type GameState } from './game';
+import { createGame, lockPiece, type GameState } from './game';
 import { moveDown, moveLeft, moveRight, rotatePiece } from './movement';
 import { SOFT_DROP_POINTS_PER_CELL } from './scoring';
 
@@ -59,4 +59,9 @@ export function hardDrop(state: GameState, random: Random): GameState {
   if (!isActive(state)) return state;
   const landed = dropToBottom(state, state.piece as Piece);
   return lockPiece({ ...state, dropTimer: 0 }, landed, random);
+}
+
+// Reinicio: solo en fin de juego devuelve una partida nueva; en otro caso, el mismo estado.
+export function restartGame(state: GameState, random: Random): GameState {
+  return state.status === 'stopped' ? createGame(random) : state;
 }

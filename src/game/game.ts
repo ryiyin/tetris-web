@@ -7,7 +7,7 @@ import { moveDown } from './movement';
 import type { PieceType } from './pieces';
 import { clearLines, lineScore } from './scoring';
 
-// 'stopped' = fin (no cabe la pieza nueva; T11 lo ampliará). 'paused' = pausa reanudable.
+// 'stopped' = fin de juego (no cabe la pieza nueva). 'paused' = pausa reanudable.
 export type GameStatus = 'playing' | 'paused' | 'stopped';
 
 export type GameState = {

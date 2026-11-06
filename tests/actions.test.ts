@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   hardDrop,
+  restartGame,
   rotateCurrent,
   shiftLeft,
   shiftRight,
@@ -245,5 +246,56 @@ describe('togglePause', () => {
     expect(resumed.piece).toEqual(piece);
     expect(resumed.status).toBe('playing');
     expect(resumed.dropTimer).toBeLessThan(100);
+  });
+});
+
+describe('restartGame', () => {
+  const stopped = (): GameState => ({
+    ...withPiece(null),
+    board: placePiece(createBoard(), { type: 'O', rotation: 0, x: 4, y: 0 }),
+    status: 'stopped',
+    score: 900,
+    lines: 14,
+    level: 2,
+    dropTimer: 345,
+  });
+
+  it('desde stopped devuelve una partida nueva', () => {
+    const s = restartGame(stopped(), random);
+    expect(s).toEqual(createGame(random));
+    expect(s.status).toBe('playing');
+    expect(s.score).toBe(0);
+    expect(s.lines).toBe(0);
+    expect(s.level).toBe(1);
+    expect(s.dropTimer).toBe(0);
+    expect(s.piece).not.toBeNull();
+    expect(s.board.every((row) => row.every((c) => c === null))).toBe(true);
+  });
+
+  it('en playing y paused devuelve la misma referencia', () => {
+    const playing = withPiece({ type: 'O', rotation: 0, x: 4, y: 5 });
+    const paused = { ...playing, status: 'paused' as const };
+    expect(restartGame(playing, random)).toBe(playing);
+    expect(restartGame(paused, random)).toBe(paused);
+  });
+});
+
+describe('acciones en fin de juego', () => {
+  const full: GameState = {
+    ...withPiece(null),
+    board: placePiece(createBoard(), { type: 'O', rotation: 0, x: 4, y: 0 }),
+    status: 'stopped',
+    score: 50,
+  };
+
+  it('todas devuelven el mismo estado', () => {
+    expect(shiftLeft(full)).toBe(full);
+    expect(shiftRight(full)).toBe(full);
+    expect(rotateCurrent(full)).toBe(full);
+    expect(softDrop(full, random)).toBe(full);
+    expect(hardDrop(full, random)).toBe(full);
+    expect(togglePause(full)).toBe(full);
+    expect(tick(full, random)).toBe(full);
+    expect(advance(full, 5000, random)).toBe(full);
   });
 });

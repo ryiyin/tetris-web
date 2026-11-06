@@ -54,16 +54,24 @@ canvas {
   height: auto;
 }
 
-/* Aviso de pausa: cubre justo el área del canvas. */
-#pause {
+/* Contenedor del canvas: se ajusta a su ancho real y sirve de base al aviso. */
+#board {
+  position: relative;
+  align-self: center;
+}
+
+/* Aviso (pausa / fin de juego): cubre justo el área del canvas. */
+#overlay {
   position: absolute;
-  top: var(--hud-height);
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  box-sizing: border-box;
+  padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
   font-size: clamp(1.5rem, 8vw, 2.5rem);
@@ -71,6 +79,6 @@ canvas {
   pointer-events: none;
 }
 
-#pause:empty {
+#overlay:empty {
   background: none;
 }
