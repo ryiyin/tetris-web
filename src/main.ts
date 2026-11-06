@@ -55,10 +55,10 @@ const loop = startLoop(
   state,
   (s) => {
     if (s.status === 'stopped') {
-      if (isNewRecord(best, s.score)) {
+      newRecord = isNewRecord(best, s.score);
+      if (newRecord) {
         best = s.score;
         saveRecord(storage, best);
-        newRecord = true;
       }
     } else {
       newRecord = false;

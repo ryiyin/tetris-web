@@ -21,8 +21,14 @@ describe('loadRecord', () => {
     expect(loadRecord(null)).toBe(0);
     expect(loadRecord(fakeStorage())).toBe(0);
   });
-  it.each(['abc', '', '-5', '1.5', '1e3', 'NaN', '99999999999999999999'])('0 con valor inválido %j', (v) => {
-    expect(loadRecord(fakeStorage(v))).toBe(0);
+  it.each(['abc', '', '-5', '1.5', '1e3', 'NaN', '99999999999999999999', '12abc', '3.5', 'Infinity', '9007199254740992'])(
+    '0 con valor inválido %j',
+    (v) => {
+      expect(loadRecord(fakeStorage(v))).toBe(0);
+    },
+  );
+  it('acepta el límite seguro', () => {
+    expect(loadRecord(fakeStorage('9007199254740991'))).toBe(9007199254740991);
   });
   it('0 sin lanzar si getItem lanza', () => {
     const s: RecordStorage = {
