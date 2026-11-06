@@ -13,4 +13,4 @@
 | 20261106-1635-lineas-y-puntaje | 2026-11-06 | T08 Líneas y puntaje | publicada | tarea/20261106-1635-lineas-y-puntaje |
 | 20261106-1645-niveles-y-velocidad | 2026-11-06 | T09 Niveles y velocidad | publicada | tarea/20261106-1645-niveles-y-velocidad |
 | 20261106-1653-pausa-con-tecla-p | 2026-11-06 | T10 Pausa | publicada | tarea/20261106-1653-pausa-con-tecla-p |
-| 20261106-1701-fin-de-juego-y-reinicio | 2026-11-06 | T11 Fin de juego y reinicio | aprobada | tarea/20261106-1701-fin-de-juego-y-reinicio |
+| 20261106-1701-fin-de-juego-y-reinicio | 2026-11-06 | T11 Fin de juego y reinicio | esperando aprobación humana | tarea/20261106-1701-fin-de-juego-y-reinicio |

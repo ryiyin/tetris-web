@@ -14,7 +14,7 @@ Estados: pendiente, en curso, en PR, publicada.
 | T08 | Líneas y puntaje | Borrar 1 a 4 líneas y mostrar puntaje (100/300/500/800 por 1/2/3/4 líneas, por nivel, más 1 punto por celda en caída suave). Registrar en brain/decisiones.md. Con pruebas. | T06 | publicada |
 | T09 | Niveles y velocidad | El nivel sube cada 10 líneas y la caída se acelera. Se muestran nivel y líneas. Con pruebas. | T08 | publicada |
 | T10 | Pausa | Tecla P para pausar y reanudar, con aviso "Pausa" en pantalla. Con pruebas. | T06 | publicada |
-| T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | en curso (20261106-1701-fin-de-juego-y-reinicio) |
+| T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | en PR |
 | T12 | Récord en localStorage | Guarda y muestra el mejor puntaje. Si localStorage falla, el juego sigue sin récord. Con almacenamiento simulado. | T11 | pendiente |
 | T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa y reinicio (tras el fin de juego, porque en celular no hay tecla Enter) visibles en celular. | T11 | pendiente |
 | T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | pendiente |
