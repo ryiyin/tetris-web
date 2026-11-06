@@ -7,4 +7,4 @@
 | 20261106-1531-publicacion-github-pages | 2026-11-06 | T02 Publicación en GitHub Pages | publicada | tarea/20261106-1531-publicacion-github-pages |
 | 20261106-1546-tablero-y-piezas | 2026-11-06 | T03 Tablero y piezas | publicada | tarea/20261106-1546-tablero-y-piezas |
 | 20261106-1553-dibujar-el-tablero | 2026-11-06 | T04 Dibujar el tablero | publicada | tarea/20261106-1553-dibujar-el-tablero |
-| 20261106-1608-movimiento-y-rotacion | 2026-11-06 | T05 Movimiento y rotación | construida | tarea/20261106-1608-movimiento-y-rotacion |
+| 20261106-1608-movimiento-y-rotacion | 2026-11-06 | T05 Movimiento y rotación | aprobada | tarea/20261106-1608-movimiento-y-rotacion |
