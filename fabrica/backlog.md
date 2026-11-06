@@ -5,7 +5,7 @@ Estados: pendiente, en curso, en PR, publicada.
 | ID | Título | Descripción | Depende de | Estado |
 |----|--------|-------------|------------|--------|
 | T01 | Esqueleto del proyecto | Vite + TypeScript strict, estructura de carpetas según convenciones, scripts dev/build/preview/test, prueba de ejemplo en Vitest, `base: '/tetris-web/'` y canvas en blanco. `npm test` y `npm run build` en verde. | - | publicada |
-| T02 | Publicación en GitHub Pages | Workflow `.github/workflows/deploy.yml` que instala, prueba, compila y despliega al hacer push a main. Se verifica abriendo la URL publicada. | T01 | pendiente |
+| T02 | Publicación en GitHub Pages | Workflow `.github/workflows/deploy.yml` que instala, prueba, compila y despliega al hacer push a main. Se verifica abriendo la URL publicada. | T01 | en curso (20261106-1531-publicacion-github-pages) |
 | T03 | Tablero y piezas | Lógica pura: tablero 10x20, 7 piezas con 4 rotaciones y colisión con bordes y celdas ocupadas. Con pruebas. | T01 | pendiente |
 | T04 | Dibujar el tablero | Tablero y una pieza fija dibujados en el canvas con colores por pieza. Prueba visual a mano. | T03 | pendiente |
 | T05 | Movimiento y rotación | Lógica pura: mover izquierda/derecha, rotar con wall kick simple y caída de un paso. Con pruebas de bordes. | T03 | pendiente |
@@ -20,4 +20,4 @@ Estados: pendiente, en curso, en PR, publicada.
 | T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | pendiente |
 | T15 | Diseño adaptable | CSS responsivo para pantalla vertical, controles al alcance del pulgar. | T13 | pendiente |
 | T16 | Pulido final y verificación | Revisar los criterios del MVP en PC y celular publicado y aviso legal discreto sobre el nombre. | T02, T12, T14, T15 | pendiente |
-| T17 | Actualizar Vite, Vitest y TypeScript | Node ya es 20.19 o más (v26.13.0). Subir Vite, Vitest y TypeScript a las versiones actuales, correr `npm audit`, dejar `npm test` y `npm run build` en verde y actualizar la decisión "Versiones fijadas" en brain/decisiones.md. | T01 | en PR |
+| T17 | Actualizar Vite, Vitest y TypeScript | Node ya es 20.19 o más (v26.13.0). Subir Vite, Vitest y TypeScript a las versiones actuales, correr `npm audit`, dejar `npm test` y `npm run build` en verde y actualizar la decisión "Versiones fijadas" en brain/decisiones.md. | T01 | publicada |
