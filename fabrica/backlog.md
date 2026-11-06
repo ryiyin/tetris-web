@@ -17,7 +17,7 @@ Estados: pendiente, en curso, en PR, publicada.
 | T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | publicada |
 | T12 | Récord en localStorage | Guarda y muestra el mejor puntaje. Si localStorage falla, el juego sigue sin récord. Con almacenamiento simulado. | T11 | publicada |
 | T13 | Botones táctiles | Izquierda, derecha, rotar, bajar, caída dura y pausa y reinicio (tras el fin de juego, porque en celular no hay tecla Enter) visibles en celular. | T11 | publicada (20261106-1727-botones-tactiles) |
-| T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | en curso (20261106-1757-gestos-tactiles) |
+| T14 | Gestos táctiles | Deslizar para mover y tocar para rotar, con `touch-action: none` en el canvas. Prueba en celular real. | T13 | en PR (20261106-1757-gestos-tactiles) |
 | T15 | Diseño adaptable | CSS responsivo para pantalla vertical, controles al alcance del pulgar. | T13 | pendiente |
 | T16 | Pulido final y verificación | Revisar los criterios del MVP en PC y celular publicado y aviso legal discreto sobre el nombre. | T02, T12, T14, T15 | pendiente |
 | T17 | Actualizar Vite, Vitest y TypeScript | Node ya es 20.19 o más (v26.13.0). Subir Vite, Vitest y TypeScript a las versiones actuales, correr `npm audit`, dejar `npm test` y `npm run build` en verde y actualizar la decisión "Versiones fijadas" en brain/decisiones.md. | T01 | publicada |
