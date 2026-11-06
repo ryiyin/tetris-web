@@ -10,4 +10,4 @@
 | 20261106-1608-movimiento-y-rotacion | 2026-11-06 | T05 Movimiento y rotación | publicada | tarea/20261106-1608-movimiento-y-rotacion |
 | 20261106-1614-caida-bloqueo-bolsa | 2026-11-06 | T06 Caída automática, bloqueo y bolsa de 7 | publicada | tarea/20261106-1614-caida-bloqueo-bolsa |
 | 20261106-1628-teclado-en-pc | 2026-11-06 | T07 Teclado en PC | publicada | tarea/20261106-1628-teclado-en-pc |
-| 20261106-1635-lineas-y-puntaje | 2026-11-06 | T08 Líneas y puntaje | aprobada | tarea/20261106-1635-lineas-y-puntaje |
+| 20261106-1635-lineas-y-puntaje | 2026-11-06 | T08 Líneas y puntaje | esperando aprobación humana | tarea/20261106-1635-lineas-y-puntaje |

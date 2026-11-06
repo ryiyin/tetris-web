@@ -11,7 +11,7 @@ Estados: pendiente, en curso, en PR, publicada.
 | T05 | Movimiento y rotación | Lógica pura: mover izquierda/derecha, rotar con wall kick simple y caída de un paso. Con pruebas de bordes. | T03 | publicada |
 | T06 | Caída automática, bloqueo y bolsa de 7 | Bucle de juego con temporizador, bloqueo al tocar fondo o pila y bolsa aleatoria de 7. Con pruebas. | T04, T05 | publicada |
 | T07 | Teclado en PC | Flechas para mover y rotar, flecha abajo para caída suave, espacio para caída dura. | T06 | publicada |
-| T08 | Líneas y puntaje | Borrar 1 a 4 líneas y mostrar puntaje (100/300/500/800 por 1/2/3/4 líneas, por nivel, más 1 punto por celda en caída suave). Registrar en brain/decisiones.md. Con pruebas. | T06 | en curso (20261106-1635-lineas-y-puntaje) |
+| T08 | Líneas y puntaje | Borrar 1 a 4 líneas y mostrar puntaje (100/300/500/800 por 1/2/3/4 líneas, por nivel, más 1 punto por celda en caída suave). Registrar en brain/decisiones.md. Con pruebas. | T06 | en PR |
 | T09 | Niveles y velocidad | El nivel sube cada 10 líneas y la caída se acelera. Se muestran nivel y líneas. Con pruebas. | T08 | pendiente |
 | T10 | Pausa | Tecla P para pausar y reanudar, con aviso "Pausa" en pantalla. Con pruebas. | T06 | pendiente |
 | T11 | Fin de juego y reinicio | Detecta que la pieza nueva no cabe, muestra "Fin del juego" y permite reiniciar. Con pruebas. | T08, T10 | pendiente |
