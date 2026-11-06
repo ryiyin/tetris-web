@@ -78,6 +78,26 @@ describe('startLoop', () => {
     expect(pending).toHaveLength(0);
   });
 
+  it('tras reiniciar el bucle queda marcado en marcha: no hay bucles duplicados', () => {
+    const loop = startLoop(stoppedState(), () => {}, random);
+    runFrame(0);
+    loop.apply((s) => restartGame(s, random));
+    runFrame(16);
+    const before = requests;
+    loop.apply((s) => ({ ...s, score: 5 }));
+    loop.apply((s) => restartGame(s, random));
+    expect(requests).toBe(before);
+    expect(pending).toHaveLength(1);
+  });
+
+  it('carrera: apply a stopped con frame pendiente, restart y runFrame deja un solo frame', () => {
+    const loop = startLoop(createGame(random), () => {}, random);
+    loop.apply(() => stoppedState());
+    loop.apply((s) => restartGame(s, random));
+    runFrame(0);
+    expect(pending).toHaveLength(1);
+  });
+
   it('el primer frame tras reiniciar usa delta 0 y el bucle sigue', () => {
     const frames: GameState[] = [];
     const loop = startLoop(stoppedState(), (s) => frames.push(s), random);
