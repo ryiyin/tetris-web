@@ -67,7 +67,7 @@ export function attachTouchControls(
   }) as EventListener);
 
   // El navegador captura el puntero táctil y no emite pointerleave: se comprueba la posición.
-  root.addEventListener('pointermove', ((event: { clientX: number; clientY: number }) => {
+  root.addEventListener('pointermove', ((event: PointerEvent) => {
     if (!activeButton) return;
     const r = activeButton.getBoundingClientRect();
     if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) {
