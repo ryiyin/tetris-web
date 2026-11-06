@@ -2,20 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { clearLines, lineScore } from '../src/game/scoring';
 import { createBoard, type Board } from '../src/game/board';
 import { BOARD_COLS, BOARD_ROWS } from '../src/game/constants';
+import type { PieceType } from '../src/game/pieces';
+
+type Row = (PieceType | null)[];
 
 // Fila llena salvo (opcionalmente) una columna.
-function fullRow(hole: number | null = null) {
+function fullRow(hole: number | null = null): Row {
   return Array.from({ length: BOARD_COLS }, (_, c) => (c === hole ? null : ('I' as const)));
 }
 
 // Tablero vacío con las filas indicadas reemplazadas.
-function withRows(rows: Record<number, ReturnType<typeof fullRow>>): Board {
+function withRows(rows: Record<number, Row>): Board {
   return createBoard().map((row, r) => rows[r] ?? row);
 }
 
 describe('clearLines', () => {
   it('una fila llena: se borra, las de arriba bajan y aparece una vacía arriba', () => {
-    const marker = Array.from({ length: BOARD_COLS }, (_, c) => (c === 0 ? ('T' as const) : null));
+    const marker: Row = Array.from({ length: BOARD_COLS }, (_, c) => (c === 0 ? ('T' as const) : null));
     const board = withRows({ 18: marker, 19: fullRow() });
     const { board: result, cleared } = clearLines(board);
     expect(cleared).toBe(1);
@@ -26,7 +29,7 @@ describe('clearLines', () => {
 
   it('2, 3 y 4 filas contiguas', () => {
     for (const n of [2, 3, 4]) {
-      const rows: Record<number, ReturnType<typeof fullRow>> = {};
+      const rows: Record<number, Row> = {};
       for (let i = 0; i < n; i++) rows[19 - i] = fullRow();
       const { board, cleared } = clearLines(withRows(rows));
       expect(cleared).toBe(n);

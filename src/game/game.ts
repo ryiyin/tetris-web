@@ -1,9 +1,10 @@
 // Estado del juego: aparición, caída y bloqueo (lógica pura, sin DOM).
 import { takeFromBag, type Random } from './bag';
 import { collides, placePiece, createBoard, type Board, type Piece } from './board';
-import { GRAVITY_MS } from './constants';
+import { GRAVITY_MS, INITIAL_LEVEL } from './constants';
 import { moveDown } from './movement';
 import type { PieceType } from './pieces';
+import { clearLines, lineScore } from './scoring';
 
 // 'stopped' = no cabe la pieza nueva (T11 lo ampliará a fin de juego).
 export type GameStatus = 'playing' | 'stopped';
@@ -15,6 +16,10 @@ export type GameState = {
   readonly status: GameStatus;
   // Milisegundos acumulados desde la última caída.
   readonly dropTimer: number;
+  readonly score: number;
+  readonly lines: number;
+  // Fijo en INITIAL_LEVEL hasta T09. Multiplica los puntos por líneas.
+  readonly level: number;
 };
 
 // Pieza en su posición de aparición (centrada en 10 columnas).
@@ -34,7 +39,31 @@ export function spawnNext(state: GameState, random: Random): GameState {
 
 export function createGame(random: Random): GameState {
   return spawnNext(
-    { board: createBoard(), piece: null, bag: [], status: 'playing', dropTimer: 0 },
+    {
+      board: createBoard(),
+      piece: null,
+      bag: [],
+      status: 'playing',
+      dropTimer: 0,
+      score: 0,
+      lines: 0,
+      level: INITIAL_LEVEL,
+    },
+    random,
+  );
+}
+
+// Punto único de bloqueo: fija la pieza, borra líneas, suma puntos y saca la siguiente.
+export function lockPiece(state: GameState, piece: Piece, random: Random): GameState {
+  const placed = placePiece(state.board, piece);
+  const { board, cleared } = clearLines(placed);
+  return spawnNext(
+    {
+      ...state,
+      board,
+      lines: state.lines + cleared,
+      score: state.score + lineScore(cleared, state.level),
+    },
     random,
   );
 }
@@ -44,8 +73,7 @@ export function tick(state: GameState, random: Random): GameState {
   if (state.status !== 'playing' || state.piece === null) return state;
   const moved = moveDown(state.board, state.piece);
   if (moved !== state.piece) return { ...state, piece: moved };
-  const board = placePiece(state.board, state.piece);
-  return spawnNext({ ...state, board }, random);
+  return lockPiece(state, state.piece, random);
 }
 
 // Suma tiempo y aplica las caídas que correspondan.

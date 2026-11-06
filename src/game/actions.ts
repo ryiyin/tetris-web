@@ -1,9 +1,10 @@
 // Acciones del jugador sobre el estado (lógica pura, sin DOM).
 // Si la acción no cambia nada, devuelven el MISMO estado (misma referencia).
 import type { Random } from './bag';
-import { placePiece, type Piece } from './board';
-import { spawnNext, tick, type GameState } from './game';
+import type { Piece } from './board';
+import { lockPiece, type GameState } from './game';
 import { moveDown, moveLeft, moveRight, rotatePiece } from './movement';
+import { SOFT_DROP_POINTS_PER_CELL } from './scoring';
 
 type PieceMove = (board: GameState['board'], piece: Piece) => Piece;
 
@@ -22,10 +23,18 @@ export const shiftLeft = (state: GameState): GameState => applyMove(state, moveL
 export const shiftRight = (state: GameState): GameState => applyMove(state, moveRight);
 export const rotateCurrent = (state: GameState): GameState => applyMove(state, rotatePiece);
 
-// Caída suave: un paso de gravedad (baja o bloquea al instante).
+// Caída suave: baja una celda (+1 punto) o, si no puede, bloquea al instante (sin ese punto).
 export function softDrop(state: GameState, random: Random): GameState {
   if (!isActive(state)) return state;
-  return { ...tick(state, random), dropTimer: 0 };
+  const piece = state.piece as Piece;
+  const moved = moveDown(state.board, piece);
+  if (moved === piece) return { ...lockPiece(state, piece, random), dropTimer: 0 };
+  return {
+    ...state,
+    piece: moved,
+    score: state.score + SOFT_DROP_POINTS_PER_CELL,
+    dropTimer: 0,
+  };
 }
 
 // Baja la pieza hasta que no pueda más.
@@ -38,10 +47,9 @@ function dropToBottom(state: GameState, piece: Piece): Piece {
   }
 }
 
-// Caída dura: al fondo, bloquea y aparece la siguiente pieza.
+// Caída dura: al fondo, bloquea y aparece la siguiente pieza. No puntúa por celda.
 export function hardDrop(state: GameState, random: Random): GameState {
   if (!isActive(state)) return state;
   const landed = dropToBottom(state, state.piece as Piece);
-  const board = placePiece(state.board, landed);
-  return spawnNext({ ...state, board, dropTimer: 0 }, random);
+  return lockPiece({ ...state, dropTimer: 0 }, landed, random);
 }
