@@ -2,7 +2,8 @@
 import { hardDrop, restartGame, rotateCurrent, shiftLeft, shiftRight, softDrop, togglePause } from './game/actions';
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame } from './game/game';
-import { attachKeyboard } from './ui/keyboard';
+import { attachKeyboard, type KeyAction } from './ui/keyboard';
+import { attachTouchControls } from './ui/touch';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
 import { overlayText } from './ui/overlay';
@@ -39,6 +40,13 @@ if (!overlayEl) {
   throw new Error('No se encontró el elemento "overlay".');
 }
 
+const controlsEl = document.getElementById('controls');
+const pauseBtn = controlsEl?.querySelector<HTMLElement>('[data-action="pause"]');
+const restartBtn = controlsEl?.querySelector<HTMLElement>('[data-action="restart"]');
+if (!controlsEl || !pauseBtn || !restartBtn) {
+  throw new Error('No se encontraron los controles táctiles ni sus botones de pausa y reinicio.');
+}
+
 // Escribe solo si cambió, para no saturar al lector de pantalla.
 function setText(el: HTMLElement, value: number | string): void {
   const text = String(value);
@@ -68,12 +76,15 @@ const loop = startLoop(
     setText(recordEl, best === 0 ? '—' : best);
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
+    const stopped = s.status === 'stopped';
+    if (restartBtn.hidden !== !stopped) restartBtn.hidden = !stopped;
+    setText(pauseBtn, s.status === 'paused' ? 'Seguir' : 'Pausa');
     setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }));
   },
   Math.random,
 );
 
-attachKeyboard(window, (action) => {
+function handleAction(action: KeyAction): void {
   switch (action) {
     case 'left':
       loop.apply(shiftLeft);
@@ -97,4 +108,7 @@ attachKeyboard(window, (action) => {
       loop.apply((s) => restartGame(s, Math.random));
       break;
   }
-});
+}
+
+attachKeyboard(window, handleAction);
+attachTouchControls(controlsEl, handleAction);

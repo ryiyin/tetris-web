@@ -94,3 +94,11 @@ Enter para reiniciar", playing = "". CSS con `white-space: pre-line`, texto cent
 - Cuándo se guarda: solo en el primer frame con `status === 'stopped'`, si es récord; nunca por frame ni a mitad de partida (recargar a medio juego no cuenta). Se lee una vez al arrancar y se mantiene en memoria (reiniciar con Enter lo conserva; si guardar falla, vive en la sesión).
 - Panel: `#hud` con cuatro columnas en orden Puntaje, Récord, Nivel, Líneas (`#record`, "—" si es 0, sin separador de miles).
 - Aviso: `overlayText(status, record?: { best, isNew })`; solo afecta a `stopped`: `isNew` -> "Fin del juego / ¡Nuevo récord! / Enter para reiniciar"; `best > 0` -> "Fin del juego / Récord: N / Enter para reiniciar"; sin récord, el texto anterior. `main.ts` mantiene `newRecord` (true al guardar, false en cualquier frame no detenido).
+
+## 2026-11-06 - Botones táctiles (T13)
+- Siete `<button type="button">` con `data-action` en `#controls` (bajo `#board`), siempre visibles también en PC. Sin librerías: `attachTouchControls` (`src/ui/touch.ts`) usa eventos pointer delegados en `#controls` y reutiliza `KeyAction`; `main.ts` comparte `handleAction` entre teclado y táctil.
+- Repetición propia (los botones no tienen la del navegador): izquierda, derecha y bajar repiten a los 300 ms y luego cada 100 ms (`REPEAT_DELAY_MS`, `REPEAT_INTERVAL_MS`); se detiene en `pointerup`, `pointercancel`, `pointerleave` (captura) y `blur` de la ventana. Temporizadores inyectables para probar sin reloj real.
+- Sin handlers `click`: así Enter o Espacio sobre un botón enfocado no dispara doble acción (junto a la tecla). `preventDefault` en `pointerdown` evita doble toque, selección y zoom.
+- El botón de reiniciar solo se muestra con `status === 'stopped'`; el de pausa muestra "Seguir" en pausa. Ambos se escriben solo si cambian.
+- Reemplaza la nota "Táctil" de T11 punto 8 (ya hay reinicio sin teclado). El aviso "Enter para reiniciar" no cambia (mejora para T15/T16).
+- `canvas` descuenta `--controls-height` de su `max-height` para caber sin scroll en vertical.
