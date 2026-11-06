@@ -19,7 +19,7 @@ No hay cuentas ni servidor. El récord vive en el navegador. Si localStorage fal
 Gratis y automático al hacer push a main. Exige repo público en el plan GitHub Free. Aceptado porque no hay secretos (el usuario pidió --public). Alternativa: Cloudflare Pages si se quiere repo privado.
 
 ## 2026-11-06 - Controles táctiles: botones y gestos propios
-Sin librerías. Se usan eventos pointer/touch con touch-action: none en el canvas.
+Sin librerías. Se usan eventos pointer/touch con touch-action: none en el canvas. Botones hechos en T13 (ver "Botonera táctil (T13)"); los gestos sobre el canvas quedan pendientes en T14.
 
 ## 2026-11-06 - Versiones fijadas: Vite 5, Vitest 2, TypeScript 5 (REEMPLAZADA por la decisión de Vite 8 / Vitest 5 / TypeScript 7, más abajo)
 Las últimas versiones (Vite 8, Vitest 5) exigen un Node más reciente que el instalado (v20.10) y Vitest no arrancaba (falta `styleText` en `node:util`). Se fijan las mayores compatibles con Node 20.10. Se puede subir de versión si se actualiza Node (>= 20.19).
@@ -78,14 +78,14 @@ Las acciones del jugador (`shiftLeft`, `shiftRight`, `rotateCurrent`, `softDrop`
 ## 2026-11-06 - Fin de juego y reinicio (T11)
 1. Status: se MANTIENE `'stopped'` como fin de juego (no se renombra ni se añade otro): ya estaba registrado y usado por bucle, acciones y pruebas.
 2. Reinicio: `restartGame(state, random)` (`src/game/actions.ts`), pura. En `'stopped'` devuelve `createGame(random)` (tablero vacío, bolsa nueva, score 0, lines 0, level 1, dropTimer 0, 'playing'); en `'playing'` o `'paused'` devuelve la MISMA referencia (no se reinicia a mitad de partida, para evitar pérdidas accidentales).
-3. Tecla: Enter -> `'restart'`. No Espacio (mantenerlo pulsado al perder reiniciaría sin querer). No es repetible (`event.repeat` se ignora, pero sí `preventDefault`); Ctrl/Alt/Meta se ignoran. Son 7 teclas con `preventDefault`. Nota para T13: un Enter sobre un botón enfocado lo activaría; revisar el foco.
+3. Tecla: Enter -> `'restart'`. No Espacio (mantenerlo pulsado al perder reiniciaría sin querer). No es repetible (`event.repeat` se ignora, pero sí `preventDefault`); Ctrl/Alt/Meta se ignoran. Son 7 teclas con `preventDefault`. Nota para T13 (RESUELTA en "Botonera táctil (T13)": botones con `tabindex="-1"` y solo Pointer Events; Enter nunca activa un botón).
 4. En fin de juego, P, flechas y Espacio no hacen nada (ya devolvían el mismo estado si `status !== 'playing'`); solo se añadieron pruebas.
 5. Aviso: REEMPLAZA el nodo `#pause` por un único `#overlay` (`role="status"`, `aria-live="polite"`, `aria-atomic="true"`, siempre en el DOM, vacío sin aviso) dentro de `#board` (contenedor relativo del tamaño del canvas). Textos de `overlayText(status)` (`src/ui/overlay.ts`, puro): paused = "Pausa
 P para continuar", stopped = "Fin del juego
 Enter para reiniciar", playing = "". CSS con `white-space: pre-line`, texto centrado y `inset: 0`. `main.ts` escribe con `setText` solo si cambió.
 6. Bucle: `startLoop` tiene un indicador `running`. El frame pide otro frame si `status !== 'stopped'`; si no, `running = false`. `apply` reanuda (`running = true`, `last = null`, un `requestAnimationFrame`) solo si estaba detenido y el nuevo estado no es `'stopped'`: sin bucles duplicados y con delta 0 en el primer frame. El listener de teclado se registra una sola vez.
 7. HUD sin cambios: conserva los valores finales al terminar y muestra 0/1/0 en el primer frame de la partida nueva.
-8. Táctil: sin Enter en celular no hay reinicio hasta T13 (que debe incluir un botón de reiniciar visible en fin de juego). Mientras tanto, recargar la página.
+8. Táctil: RESUELTO en T13, que añade el botón Reiniciar (habilitado solo en fin de juego).
 
 ## 2026-11-06 - Récord en localStorage (T12)
 - Módulos: `isNewRecord(best, score) = score > best && score > 0` en `src/game/record.ts` (puro); `RECORD_KEY`, `RecordStorage`, `loadRecord`, `saveRecord` y `getLocalStorage` en `src/ui/recordStorage.ts` (nombre distinto para no confundirlo con el de `game/`). El almacenamiento se inyecta (`Pick<Storage, 'getItem' | 'setItem'>`), así se prueba sin jsdom.
@@ -94,3 +94,12 @@ Enter para reiniciar", playing = "". CSS con `white-space: pre-line`, texto cent
 - Cuándo se guarda: solo en el primer frame con `status === 'stopped'`, si es récord; nunca por frame ni a mitad de partida (recargar a medio juego no cuenta). Se lee una vez al arrancar y se mantiene en memoria (reiniciar con Enter lo conserva; si guardar falla, vive en la sesión).
 - Panel: `#hud` con cuatro columnas en orden Puntaje, Récord, Nivel, Líneas (`#record`, "—" si es 0, sin separador de miles).
 - Aviso: `overlayText(status, record?: { best, isNew })`; solo afecta a `stopped`: `isNew` -> "Fin del juego / ¡Nuevo récord! / Enter para reiniciar"; `best > 0` -> "Fin del juego / Récord: N / Enter para reiniciar"; sin récord, el texto anterior. `main.ts` mantiene `newRecord` (true al guardar, false en cualquier frame no detenido).
+
+## 2026-11-06 - Botonera táctil (T13)
+- Botones y rejilla: `<div id="controls" role="group">` en `index.html`, después de `#board`, con 7 botones `data-action` (valores de `KeyAction`). Rejilla 4x2: fila 1 izquierda, bajar, derecha, rotar; fila 2 pausa, reiniciar, caída dura (2 columnas). Botones de al menos 3rem, gap y padding de 0.5rem, ancho `min(100vw, 20rem)`, fondo `#2a2a3a`, texto blanco. Nombre accesible (`aria-label`) en español.
+- Visibilidad: oculta por defecto y visible con `(pointer: coarse), (hover: none)` (constante `TOUCH_QUERY` en `main.ts`, debe coincidir con el CSS). En PC con ratón no se ve; un híbrido con puntero principal fino tampoco la verá (aceptado).
+- Repetición: solo izquierda, derecha y bajar (`isRepeatable`, exportado de `keyboard.ts`). Dispara al instante; a los 170 ms (`REPEAT_DELAY_MS`) empieza a repetir cada 60 ms (`REPEAT_INTERVAL_MS`). `createRepeater(fire, timers, repeatable)` con timers inyectables; un repetidor por botón. Se limpia en pointerup, pointercancel, pointerleave, window blur y visibilitychange (oculto), y antes de cada nuevo inicio.
+- Eventos: solo Pointer Events (ni click, ni touchstart, ni mousedown: sin doble disparo). `pointerdown` hace `preventDefault` (sin foco) y los botones llevan `tabindex="-1"`: Enter y Espacio nunca activan un botón; consecuencia aceptada: no se llega a ellos con Tab. `contextmenu` se cancela solo dentro de `#controls`. Se ignora pointerdown de ratón con `button !== 0`.
+- Estados: `isActionEnabled`: reiniciar solo en `'stopped'`; pausa deshabilitada en `'stopped'`; el resto siempre habilitado (para no perder pointerup). `pauseButtonLabel` alterna "Pausa"/"Continuar". `main.ts` actualiza solo si cambió y usa un único `dispatch` para teclado y botones.
+- Aviso: `overlayText(status, record?, touch = false)`; con touch dice "Toca Continuar" y "Toca Reiniciar". `main.ts` evalúa `matchMedia(TOUCH_QUERY)` en cada frame.
+- Layout: variables CSS `--controls-height` (0px; 7.5rem en modo táctil) y `--board-max-h` (100dvh - `--hud-height` - `--controls-height`); el canvas usa `max-height: var(--board-max-h)` y el aviso `font-size: clamp(0.625rem, min(8vw, calc(var(--board-max-h) * 0.04)), 2rem)` (sin `container-type`, que colapsaría `#board`). La disposición horizontal queda para T15.

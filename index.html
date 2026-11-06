@@ -18,6 +18,15 @@
         <canvas id="game" width="300" height="600" aria-label="Tablero de Tetris"></canvas>
         <div id="overlay" role="status" aria-live="polite" aria-atomic="true"></div>
       </div>
+      <div id="controls" role="group" aria-label="Controles táctiles">
+        <button type="button" tabindex="-1" data-action="left" aria-label="Izquierda"><span aria-hidden="true">◀</span></button>
+        <button type="button" tabindex="-1" data-action="softDrop" aria-label="Bajar"><span aria-hidden="true">▼</span></button>
+        <button type="button" tabindex="-1" data-action="right" aria-label="Derecha"><span aria-hidden="true">▶</span></button>
+        <button type="button" tabindex="-1" data-action="rotate" aria-label="Rotar"><span aria-hidden="true">⟳</span></button>
+        <button type="button" tabindex="-1" data-action="pause" aria-label="Pausa"><span aria-hidden="true">Pausa</span></button>
+        <button type="button" tabindex="-1" data-action="restart" aria-label="Reiniciar" disabled><span aria-hidden="true">Reiniciar</span></button>
+        <button type="button" tabindex="-1" data-action="hardDrop" aria-label="Caída dura"><span aria-hidden="true">⤓ Caída dura</span></button>
+      </div>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>

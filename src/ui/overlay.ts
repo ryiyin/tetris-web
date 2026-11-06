@@ -6,14 +6,16 @@ export interface RecordInfo {
   isNew: boolean;
 }
 
-export function overlayText(status: GameStatus, record?: RecordInfo): string {
+// Con touch=true el aviso habla de botones en vez de teclas.
+export function overlayText(status: GameStatus, record?: RecordInfo, touch = false): string {
+  const restart = touch ? 'Toca Reiniciar' : 'Enter para reiniciar';
   switch (status) {
     case 'paused':
-      return 'Pausa\nP para continuar';
+      return touch ? 'Pausa\nToca Continuar' : 'Pausa\nP para continuar';
     case 'stopped':
-      if (record?.isNew) return 'Fin del juego\n¡Nuevo récord!\nEnter para reiniciar';
-      if (record && record.best > 0) return `Fin del juego\nRécord: ${record.best}\nEnter para reiniciar`;
-      return 'Fin del juego\nEnter para reiniciar';
+      if (record?.isNew) return `Fin del juego\n¡Nuevo récord!\n${restart}`;
+      if (record && record.best > 0) return `Fin del juego\nRécord: ${record.best}\n${restart}`;
+      return `Fin del juego\n${restart}`;
     default:
       return '';
   }
