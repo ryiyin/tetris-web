@@ -1,6 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { vi } from 'vitest';
 import { attachGestures, createGestureTracker } from '../src/ui/gestures';
 
 const M = { cellW: 30, cellH: 30 };
@@ -211,5 +210,13 @@ describe('CSS del canvas', () => {
     expect(rule?.[2]).toMatch(/user-select:\s*none/);
     expect(rule?.[2]).toMatch(/-webkit-touch-callout:\s*none/);
     expect(rule?.[2]).toMatch(/-webkit-tap-highlight-color:\s*transparent/);
+  });
+});
+
+describe('tracker: fin tras gran desplazamiento sin move', () => {
+  it('no rota si el dedo terminó lejos sin eventos move', () => {
+    const t = createGestureTracker(M);
+    t.start(50, 50, 0);
+    expect(t.end(50, 150, 100)).toEqual([]);
   });
 });

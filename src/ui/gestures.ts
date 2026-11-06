@@ -77,7 +77,10 @@ export function createGestureTracker(metrics: GestureMetrics): GestureTracker {
     const wasAxis = axis;
     cancel();
     const elapsed = t - st;
-    if (wasAxis === null) return elapsed <= TAP_MAX_MS ? ['rotate'] : [];
+    if (wasAxis === null) {
+      const moved = Math.hypot(x - sx, y - sy) > SLOP_PX;
+      return !moved && elapsed <= TAP_MAX_MS ? ['rotate'] : [];
+    }
     const dx = x - sx;
     const dy = y - sy;
     if (wasAxis === 'v' && dy >= FLICK_MIN_PX && elapsed <= FLICK_MAX_MS && dy > 2 * Math.abs(dx)) {
