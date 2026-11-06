@@ -151,6 +151,64 @@ describe('advance', () => {
   });
 });
 
+describe('niveles', () => {
+  const clearOne = (lines: number, level: number): GameState => ({
+    ...createGame(random),
+    level,
+    lines,
+    board: boardWithGap([19]),
+    piece: { type: 'I', rotation: 1, x: 7, y: 16 },
+  });
+
+  it('9 -> 10 líneas sube a nivel 2 y puntúa con el nivel previo', () => {
+    const t = tick(clearOne(9, 1), random);
+    expect(t.lines).toBe(10);
+    expect(t.level).toBe(2);
+    expect(t.score).toBe(100);
+  });
+
+  it('la siguiente jugada con líneas usa el nivel 2', () => {
+    const t = tick(clearOne(10, 2), random);
+    expect(t.score).toBe(200);
+    expect(t.level).toBe(2);
+  });
+
+  it('8 -> 10 líneas (2 líneas) sube a nivel 2', () => {
+    const s: GameState = { ...clearOne(8, 1), board: boardWithGap([18, 19]) };
+    const t = tick(s, random);
+    expect(t.lines).toBe(10);
+    expect(t.level).toBe(2);
+    expect(t.score).toBe(300);
+  });
+
+  it('sin borrar líneas el nivel no cambia', () => {
+    const s: GameState = {
+      ...createGame(random),
+      lines: 9,
+      piece: { type: 'O', rotation: 0, x: 4, y: 18 },
+    };
+    const t = tick(s, random);
+    expect(t.level).toBe(1);
+    expect(t.lines).toBe(9);
+  });
+});
+
+describe('advance según el nivel', () => {
+  it('nivel 2: 919 ms no baja, 920 baja 1 y deja dropTimer en 0', () => {
+    const g = { ...createGame(random), level: 2 };
+    expect(advance(g, 919, random).piece!.y).toBe(0);
+    const a = advance(g, 920, random);
+    expect(a.piece!.y).toBe(1);
+    expect(a.dropTimer).toBe(0);
+  });
+
+  it('nivel 13: 300 ms bajan 3 filas', () => {
+    const a = advance({ ...createGame(random), level: 13 }, 300, random);
+    expect(a.piece!.y).toBe(3);
+    expect(a.dropTimer).toBe(0);
+  });
+});
+
 describe('fin: la pieza nueva no cabe', () => {
   function almostFull(): GameState {
     const g = createGame(random);

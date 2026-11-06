@@ -1,7 +1,8 @@
 // Estado del juego: aparición, caída y bloqueo (lógica pura, sin DOM).
 import { takeFromBag, type Random } from './bag';
 import { collides, placePiece, createBoard, type Board, type Piece } from './board';
-import { GRAVITY_MS, INITIAL_LEVEL } from './constants';
+import { INITIAL_LEVEL } from './constants';
+import { gravityMs, levelForLines } from './levels';
 import { moveDown } from './movement';
 import type { PieceType } from './pieces';
 import { clearLines, lineScore } from './scoring';
@@ -18,7 +19,7 @@ export type GameState = {
   readonly dropTimer: number;
   readonly score: number;
   readonly lines: number;
-  // Fijo en INITIAL_LEVEL hasta T09. Multiplica los puntos por líneas.
+  // Sube cada LINES_PER_LEVEL líneas (levelForLines). Multiplica los puntos y acelera la caída.
   readonly level: number;
 };
 
@@ -57,12 +58,15 @@ export function createGame(random: Random): GameState {
 export function lockPiece(state: GameState, piece: Piece, random: Random): GameState {
   const placed = placePiece(state.board, piece);
   const { board, cleared } = clearLines(placed);
+  const lines = state.lines + cleared;
   return spawnNext(
     {
       ...state,
       board,
-      lines: state.lines + cleared,
+      lines,
+      // El puntaje usa el nivel previo; el nuevo aplica desde la siguiente pieza.
       score: state.score + lineScore(cleared, state.level),
+      level: levelForLines(lines),
     },
     random,
   );
@@ -80,8 +84,10 @@ export function tick(state: GameState, random: Random): GameState {
 export function advance(state: GameState, deltaMs: number, random: Random): GameState {
   if (state.status !== 'playing') return state;
   let current: GameState = { ...state, dropTimer: state.dropTimer + Math.max(0, deltaMs) };
-  while (current.dropTimer >= GRAVITY_MS && current.status === 'playing') {
-    current = tick({ ...current, dropTimer: current.dropTimer - GRAVITY_MS }, random);
+  while (current.status === 'playing') {
+    const interval = gravityMs(current.level);
+    if (current.dropTimer < interval) break;
+    current = tick({ ...current, dropTimer: current.dropTimer - interval }, random);
   }
   return current;
 }
