@@ -7,10 +7,17 @@ import {
   softDrop,
 } from '../src/game/actions';
 import { createGame, type GameState } from '../src/game/game';
-import { createBoard, placePiece } from '../src/game/board';
+import { createBoard, placePiece, type Board } from '../src/game/board';
 import type { Piece } from '../src/game/board';
 
 const random = () => 0;
+
+// Filas indicadas llenas salvo la columna 9 (la pieza I vertical en x=7 la completa).
+function boardWithGap(rows: number[]): Board {
+  return createBoard().map((row, r) =>
+    rows.includes(r) ? row.map((_, c) => (c === 9 ? null : ('J' as const))) : row,
+  );
+}
 
 function withPiece(piece: Piece | null, extra: Partial<GameState> = {}): GameState {
   return { ...createGame(random), piece, ...extra };
@@ -97,6 +104,26 @@ describe('softDrop', () => {
     expect(r.board[17][5]).toBe('O');
   });
 
+  it('si baja una celda suma 1 punto (sin multiplicar por nivel)', () => {
+    const s = withPiece({ type: 'O', rotation: 0, x: 4, y: 5 }, { score: 10, level: 3 });
+    expect(softDrop(s, random).score).toBe(11);
+  });
+
+  it('si bloquea no suma el punto de caída', () => {
+    const s = withPiece({ type: 'O', rotation: 0, x: 4, y: 18 }, { score: 10 });
+    expect(softDrop(s, random).score).toBe(10);
+  });
+
+  it('si bloquea y completa una línea suma lineScore', () => {
+    const s = withPiece(
+      { type: 'I', rotation: 1, x: 7, y: 16 },
+      { board: boardWithGap([19]) },
+    );
+    const r = softDrop(s, random);
+    expect(r.lines).toBe(1);
+    expect(r.score).toBe(100);
+  });
+
   it('no muta el estado', () => {
     const s = withPiece({ type: 'O', rotation: 0, x: 4, y: 18 });
     const copy = structuredClone(s);
@@ -134,6 +161,24 @@ describe('hardDrop', () => {
     const r = hardDrop(s, random);
     expect(r.status).toBe('stopped');
     expect(r.piece).toBeNull();
+  });
+
+  it('sin líneas el puntaje no cambia (no puntúa por celda)', () => {
+    const s = withPiece({ type: 'O', rotation: 0, x: 4, y: 0 }, { score: 7 });
+    const r = hardDrop(s, random);
+    expect(r.score).toBe(7);
+    expect(r.lines).toBe(0);
+  });
+
+  it('que completa líneas suma solo lineScore', () => {
+    const s = withPiece(
+      { type: 'I', rotation: 1, x: 7, y: 0 },
+      { board: boardWithGap([16, 17, 18, 19]) },
+    );
+    const r = hardDrop(s, random);
+    expect(r.lines).toBe(4);
+    expect(r.score).toBe(800);
+    expect(r.dropTimer).toBe(0);
   });
 
   it('no muta el estado', () => {

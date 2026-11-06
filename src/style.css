@@ -5,11 +5,38 @@ body {
   justify-content: center;
   align-items: center;
   background: #111;
+  color: #eee;
+  font-family: system-ui, sans-serif;
+}
+
+/* Columna: panel arriba y canvas debajo, con el mismo ancho. */
+#app {
+  --hud-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#hud {
+  box-sizing: border-box;
+  height: var(--hud-height);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.25rem;
+  font-size: 1rem;
+}
+
+#hud span {
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+  margin-left: 0.4rem;
 }
 
 canvas {
   touch-action: none;
-  max-height: 100dvh;
+  display: block;
+  max-height: calc(100dvh - var(--hud-height));
   max-width: 100vw;
   aspect-ratio: 1 / 2;
   height: auto;

@@ -19,8 +19,22 @@ if (!ctx) {
 canvas.width = BOARD_COLS * CELL_SIZE;
 canvas.height = BOARD_ROWS * CELL_SIZE;
 
+const scoreEl = document.getElementById('score');
+const linesEl = document.getElementById('lines');
+if (!scoreEl || !linesEl) {
+  throw new Error('No se encontraron los elementos "score" y "lines".');
+}
+
 const state = createGame(Math.random);
-const loop = startLoop(state, (s) => drawBoard(ctx, s.board, s.piece), Math.random);
+const loop = startLoop(
+  state,
+  (s) => {
+    drawBoard(ctx, s.board, s.piece);
+    scoreEl.textContent = String(s.score);
+    linesEl.textContent = String(s.lines);
+  },
+  Math.random,
+);
 
 attachKeyboard(window, (action) => {
   switch (action) {
