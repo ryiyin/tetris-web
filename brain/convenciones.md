@@ -38,6 +38,7 @@ Scripts esperados en package.json: `dev` = `vite`, `build` = `tsc && vite build`
 - Configuración única: en GitHub, Settings > Pages > Source = "GitHub Actions". El repo debe ser público.
 - Después de un push a main: revisar en la pestaña Actions que el flujo termine en verde y abrir `https://<usuario>.github.io/tetris-web/`.
 - Si las pruebas fallan, no se publica.
+- El workflow usa Node 24 y `npm ci` (instalación reproducible con package-lock.json).
 
 ## Secretos
 - No hay variables de entorno ni secretos.
