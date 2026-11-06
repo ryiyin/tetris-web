@@ -239,8 +239,11 @@ describe('togglePause', () => {
 
   it('tras reanudar un delta pequeño no hace caer la pieza', () => {
     const p = togglePause(withPiece(piece, { dropTimer: 0 }));
-    advance(p, 30_000, random);
-    const resumed = advance(togglePause(p), 16, random);
+    expect(p.status).toBe('paused');
+    const afterPause = advance(p, 30_000, random);
+    const resumed = advance(togglePause(afterPause), 16, random);
     expect(resumed.piece).toEqual(piece);
+    expect(resumed.status).toBe('playing');
+    expect(resumed.dropTimer).toBeLessThan(100);
   });
 });

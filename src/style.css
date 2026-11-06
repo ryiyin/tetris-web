@@ -72,5 +72,5 @@ canvas {
 }
 
 #pause:empty {
-  display: none;
+  background: none;
 }
