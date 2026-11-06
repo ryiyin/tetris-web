@@ -56,6 +56,8 @@ function fakeClock() {
   return { timers, advance, pending: () => timeouts.size + intervals.size };
 }
 
+const RECT = { left: 10, right: 60, top: 10, bottom: 60 };
+
 function setup() {
   const handlers: Record<string, Handler> = {};
   const root = {
@@ -82,7 +84,7 @@ function setup() {
     const target = {
       closest: (sel: string) =>
         sel === '[data-action]' && action !== null
-          ? { dataset: { action } }
+          ? { dataset: { action }, getBoundingClientRect: () => RECT }
           : null,
     };
     handlers.pointerdown({ target, preventDefault });
@@ -149,6 +151,25 @@ describe('attachTouchControls', () => {
     clock.advance(2000);
     expect(actions).toEqual(['right']);
     expect(clock.pending()).toBe(0);
+  });
+
+  it('pointermove fuera del botón detiene la repetición', () => {
+    const { actions, down, clock, handlers } = setup();
+    down('left');
+    clock.advance(REPEAT_DELAY_MS);
+    handlers.pointermove({ clientX: 100, clientY: 30 });
+    clock.advance(2000);
+    expect(actions).toHaveLength(2);
+    expect(clock.pending()).toBe(0);
+  });
+
+  it('pointermove dentro del botón sigue repitiendo', () => {
+    const { actions, down, clock, handlers } = setup();
+    down('left');
+    handlers.pointermove({ clientX: 30, clientY: 30 });
+    clock.advance(REPEAT_DELAY_MS);
+    expect(actions).toHaveLength(2);
+    expect(clock.pending()).toBe(1);
   });
 
   it('blur de la ventana detiene la repetición', () => {

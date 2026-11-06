@@ -2,7 +2,7 @@
 export type KeyAction = 'left' | 'right' | 'rotate' | 'softDrop' | 'hardDrop' | 'pause' | 'restart';
 
 // Teclas que se repiten al mantenerlas pulsadas.
-const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
+export const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
 
 export function keyToAction(key: string): KeyAction | null {
   switch (key) {

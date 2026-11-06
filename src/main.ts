@@ -78,6 +78,7 @@ const loop = startLoop(
     setText(linesEl, s.lines);
     const stopped = s.status === 'stopped';
     if (restartBtn.hidden !== !stopped) restartBtn.hidden = !stopped;
+    if (pauseBtn.hidden !== stopped) pauseBtn.hidden = stopped;
     setText(pauseBtn, s.status === 'paused' ? 'Seguir' : 'Pausa');
     setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }));
   },

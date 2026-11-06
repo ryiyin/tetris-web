@@ -1,11 +1,9 @@
 // Botones en pantalla: traducen toques (eventos pointer) a las mismas acciones del teclado.
-import type { KeyAction } from './keyboard';
+import { REPEATABLE, type KeyAction } from './keyboard';
 
 export const REPEAT_DELAY_MS = 300;
 export const REPEAT_INTERVAL_MS = 100;
 
-// Acciones que se repiten al mantener el botón pulsado.
-const REPEATABLE: readonly KeyAction[] = ['left', 'right', 'softDrop'];
 const ACTIONS: readonly KeyAction[] = ['left', 'right', 'rotate', 'softDrop', 'hardDrop', 'pause', 'restart'];
 
 // Temporizadores inyectables para probar sin reloj real.
@@ -23,6 +21,8 @@ const REAL_TIMERS: TouchTimers = {
   clearInterval: (...args) => clearInterval(...args),
 } as TouchTimers;
 
+type Rect = { left: number; right: number; top: number; bottom: number };
+
 type PointerLike = {
   target: unknown;
   preventDefault: () => void;
@@ -36,8 +36,10 @@ export function attachTouchControls(
 ): void {
   let delayId: ReturnType<typeof setTimeout> | null = null;
   let intervalId: ReturnType<typeof setInterval> | null = null;
+  let activeButton: { getBoundingClientRect: () => Rect } | null = null;
 
   function stop(): void {
+    activeButton = null;
     if (delayId !== null) timers.clearTimeout(delayId);
     if (intervalId !== null) timers.clearInterval(intervalId);
     delayId = null;
@@ -46,12 +48,15 @@ export function attachTouchControls(
 
   root.addEventListener('pointerdown', ((event: PointerLike) => {
     const target = event.target as { closest?: (selector: string) => unknown } | null;
-    const button = target?.closest?.('[data-action]') as { dataset: { action?: string } } | null | undefined;
+    const button = target?.closest?.('[data-action]') as
+      | { dataset: { action?: string }; getBoundingClientRect: () => Rect }
+      | null | undefined;
     const action = button?.dataset.action as KeyAction | undefined;
     if (!action || !ACTIONS.includes(action)) return;
     // Evita doble toque, selección de texto y zoom.
     event.preventDefault();
     stop();
+    activeButton = button ?? null;
     onAction(action);
     if (!REPEATABLE.includes(action)) return;
     delayId = timers.setTimeout(() => {
@@ -61,6 +66,14 @@ export function attachTouchControls(
     }, REPEAT_DELAY_MS);
   }) as EventListener);
 
+  // El navegador captura el puntero táctil y no emite pointerleave: se comprueba la posición.
+  root.addEventListener('pointermove', ((event: { clientX: number; clientY: number }) => {
+    if (!activeButton) return;
+    const r = activeButton.getBoundingClientRect();
+    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) {
+      stop();
+    }
+  }) as EventListener);
   root.addEventListener('pointerup', stop);
   root.addEventListener('pointercancel', stop);
   // pointerleave no burbujea: se escucha en captura para ver el de cada botón.

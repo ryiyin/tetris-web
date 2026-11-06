@@ -102,3 +102,9 @@ Enter para reiniciar", playing = "". CSS con `white-space: pre-line`, texto cent
 - El botón de reiniciar solo se muestra con `status === 'stopped'`; el de pausa muestra "Seguir" en pausa. Ambos se escriben solo si cambian.
 - Reemplaza la nota "Táctil" de T11 punto 8 (ya hay reinicio sin teclado). El aviso "Enter para reiniciar" no cambia (mejora para T15/T16).
 - `canvas` descuenta `--controls-height` de su `max-height` para caber sin scroll en vertical.
+
+### Ronda 1 de T13 (correcciones)
+- `attachTouchControls` recibe un cuarto parámetro `win` (por defecto `window`) para escuchar `blur`; se inyecta en las pruebas.
+- Repetición: se guarda el botón activo en `pointerdown` y `pointermove` en la raíz detiene si el puntero sale de su `getBoundingClientRect()` (el navegador captura el puntero táctil y no emite `pointerleave`); `pointerleave` queda de respaldo.
+- `REPEATABLE` se exporta desde `keyboard.ts` y lo reutiliza `touch.ts`.
+- CSS: columnas `minmax(0, 1fr)`, botones con `min-width: 0` y texto a 0.8rem: el ancho de `#app` no depende del texto. El botón de pausa se oculta con `status === 'stopped'`. Glifos: "↻" para rotar y "Caer" para caída dura (con `aria-label` en español).
