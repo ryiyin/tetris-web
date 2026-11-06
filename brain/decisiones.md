@@ -35,3 +35,6 @@ En `collides`, una celda sobre el tablero (fila < 0) no cuenta como colisión si
 
 ## 2026-11-06 - Paleta de colores por pieza y CELL_SIZE
 Colores clásicos fijos en `PIECE_COLORS` (`src/ui/render.ts`): I cian `#00e5ff`, O amarillo `#ffd600`, T morado `#aa00ff`, S verde `#00c853`, Z rojo `#ff1744`, J azul `#2962ff`, L naranja `#ff9100`. Fondo `#0b0b14` y cuadrícula blanca al 8 %. Un solo esquema (sin temas). `CELL_SIZE` (30 px) define el tamaño interno del canvas: `BOARD_COLS * CELL_SIZE` x `BOARD_ROWS * CELL_SIZE` (300x600), asignado desde `main.ts`; el tamaño visible se escala con CSS manteniendo la proporción 1:2.
+
+## 2026-11-06 - Wall kick simple y contrato de movimiento
+Al rotar (`rotatePiece`, `src/game/movement.ts`) se prueban desplazamientos horizontales `0, -1, +1, -2, +2` (constante `WALL_KICKS`) sin tablas SRS ni kicks verticales; se usa el primero que no colisione. Contrato de `moveLeft`/`moveRight`/`moveDown`/`rotatePiece`, todas `(board, piece) => Piece`: si el movimiento es posible devuelven una `Piece` nueva; si no, la MISMA referencia recibida (T06 detecta el fallo con `result === piece`). Nunca mutan ni lanzan error por movimiento imposible. Solo usan `collides`, sin reglas propias para filas negativas.
