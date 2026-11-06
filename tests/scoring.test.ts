@@ -51,6 +51,35 @@ describe('clearLines', () => {
     for (const row of result) expect(row).toHaveLength(BOARD_COLS);
   });
 
+  it('3 filas llenas no contiguas (15, 17, 19) conservan el orden del resto', () => {
+    const a = fullRow(0);
+    const b = fullRow(1);
+    const board = withRows({ 14: fullRow(5), 15: fullRow(), 16: a, 17: fullRow(), 18: b, 19: fullRow() });
+    const { board: result, cleared } = clearLines(board);
+    expect(cleared).toBe(3);
+    expect(result).toHaveLength(BOARD_ROWS);
+    expect(result[17]).toEqual(fullRow(5));
+    expect(result[18]).toEqual(a);
+    expect(result[19]).toEqual(b);
+    for (let r = 0; r < 17; r++) expect(result[r]).toEqual(createBoard()[0]);
+    for (const row of result) expect(row).toHaveLength(BOARD_COLS);
+  });
+
+  it('4 filas llenas no contiguas (14, 16, 18, 19) conservan el orden del resto', () => {
+    const a = fullRow(0);
+    const b = fullRow(1);
+    const c = fullRow(2);
+    const board = withRows({ 13: a, 14: fullRow(), 15: b, 16: fullRow(), 17: c, 18: fullRow(), 19: fullRow() });
+    const { board: result, cleared } = clearLines(board);
+    expect(cleared).toBe(4);
+    expect(result).toHaveLength(BOARD_ROWS);
+    expect(result[17]).toEqual(a);
+    expect(result[18]).toEqual(b);
+    expect(result[19]).toEqual(c);
+    for (let r = 0; r < 17; r++) expect(result[r]).toEqual(createBoard()[0]);
+    for (const row of result) expect(row).toHaveLength(BOARD_COLS);
+  });
+
   it('sin filas llenas devuelve la misma referencia y 0', () => {
     const board = withRows({ 19: fullRow(3) });
     const result = clearLines(board);
