@@ -19,7 +19,7 @@ No hay cuentas ni servidor. El récord vive en el navegador. Si localStorage fal
 Gratis y automático al hacer push a main. Exige repo público en el plan GitHub Free. Aceptado porque no hay secretos (el usuario pidió --public). Alternativa: Cloudflare Pages si se quiere repo privado.
 
 ## 2026-11-06 - Controles táctiles: botones y gestos propios
-Sin librerías. Se usan eventos pointer/touch con touch-action: none en el canvas. Botones hechos en T13 (ver "Botonera táctil (T13)"); los gestos sobre el canvas quedan pendientes en T14.
+Sin librerías. Se usan eventos pointer con touch-action: none en el canvas. Botones hechos en T13 (ver "Botonera táctil (T13)") y gestos hechos en T14 (ver "Gestos táctiles (T14)").
 
 ## 2026-11-06 - Versiones fijadas: Vite 5, Vitest 2, TypeScript 5 (REEMPLAZADA por la decisión de Vite 8 / Vitest 5 / TypeScript 7, más abajo)
 Las últimas versiones (Vite 8, Vitest 5) exigen un Node más reciente que el instalado (v20.10) y Vitest no arrancaba (falta `styleText` en `node:util`). Se fijan las mayores compatibles con Node 20.10. Se puede subir de versión si se actualiza Node (>= 20.19).
@@ -103,3 +103,13 @@ Enter para reiniciar", playing = "". CSS con `white-space: pre-line`, texto cent
 - Estados: `isActionEnabled`: reiniciar solo en `'stopped'`; pausa deshabilitada en `'stopped'`; el resto siempre habilitado (para no perder pointerup). `pauseButtonLabel` alterna "Pausa"/"Continuar". `main.ts` actualiza solo si cambió y usa un único `dispatch` para teclado y botones.
 - Aviso: `overlayText(status, record?, touch = false)`; con touch dice "Toca Continuar" y "Toca Reiniciar". `main.ts` evalúa `matchMedia(TOUCH_QUERY)` en cada frame.
 - Layout: variables CSS `--controls-height` (0px; 7.5rem en modo táctil) y `--board-max-h` (100dvh - `--hud-height` - `--controls-height`); el canvas usa `max-height: var(--board-max-h)` y el aviso `font-size: clamp(0.625rem, min(8vw, calc(var(--board-max-h) * 0.04)), 2rem)` (sin `container-type`, que colapsaría `#board`). La disposición horizontal queda para T15.
+
+## 2026-11-06 - Gestos táctiles (T14)
+- Módulo `src/ui/gestures.ts`: `createGestureTracker(metrics)` (lógica pura, el tiempo entra como argumento) y `attachGestures(canvas, onAction, win?, doc?)` (Pointer Events). Reutiliza el `dispatch` de `main.ts`; `src/game/` no se toca.
+- Constantes: `SLOP_PX = 10`, `FLICK_MIN_PX = 60`, `FLICK_MAX_MS = 300`, `TAP_MAX_MS = 250`. Pasado `SLOP_PX` se fija el eje dominante hasta soltar (el otro eje se ignora).
+- Horizontal: una acción `left`/`right` por cada `cellW` recorrido (ancla que avanza una celda por acción). Vertical hacia abajo: un `softDrop` por `cellH`; hacia arriba nada. Al soltar, flick vertical (dy >= 60, <= 300 ms, dy > 2*|dx|) = `hardDrop`. Toque (sin superar `SLOP_PX`, <= 250 ms) = `rotate`; pulsación larga no hace nada.
+- Solo `pointerType` `touch` y `pen` (el ratón se ignora); un solo `pointerId` activo; `setPointerCapture` en `try/catch`; `contextmenu` cancelado solo en el canvas; `blur` y `visibilitychange` (oculto) cancelan. Ningún `click`, `touchstart` ni `mousedown`.
+- Los gestos no reanudan la pausa ni reinician (eso queda en los botones); en `paused` y `stopped` las acciones se ignoran solas.
+- CSS del canvas: además de `touch-action: none`, `user-select: none`, `-webkit-user-select: none`, `-webkit-touch-callout: none` y `-webkit-tap-highlight-color: transparent`.
+- Pruebas: la prueba del CSS lee `src/style.css` con `node:fs`; para que `tsc` compile sin añadir `@types/node` se agregó `tests/node-fs.d.ts` con una declaración mínima.
+- Prueba en celular real y ajuste de sensibilidad: pendiente (criterios manuales 11 a 18 de la spec); se anotará aquí el resultado.
