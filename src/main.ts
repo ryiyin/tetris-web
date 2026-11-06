@@ -6,6 +6,8 @@ import { attachKeyboard } from './ui/keyboard';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
 import { overlayText } from './ui/overlay';
+import { isNewRecord } from './game/record';
+import { getLocalStorage, loadRecord, saveRecord } from './ui/recordStorage';
 
 const canvas = document.getElementById('game') as HTMLCanvasElement | null;
 if (!canvas) {
@@ -27,6 +29,11 @@ if (!scoreEl || !levelEl || !linesEl) {
   throw new Error('No se encontraron los elementos "score", "level" y "lines".');
 }
 
+const recordEl = document.getElementById('record');
+if (!recordEl) {
+  throw new Error('No se encontró el elemento "record".');
+}
+
 const overlayEl = document.getElementById('overlay');
 if (!overlayEl) {
   throw new Error('No se encontró el elemento "overlay".');
@@ -38,15 +45,30 @@ function setText(el: HTMLElement, value: number | string): void {
   if (el.textContent !== text) el.textContent = text;
 }
 
+// El récord se lee una vez y vive en memoria; se guarda solo al terminar la partida.
+const storage = getLocalStorage();
+let best = loadRecord(storage);
+let newRecord = false;
+
 const state = createGame(Math.random);
 const loop = startLoop(
   state,
   (s) => {
+    if (s.status === 'stopped') {
+      newRecord = isNewRecord(best, s.score);
+      if (newRecord) {
+        best = s.score;
+        saveRecord(storage, best);
+      }
+    } else {
+      newRecord = false;
+    }
     drawBoard(ctx, s.board, s.piece);
     setText(scoreEl, s.score);
+    setText(recordEl, best === 0 ? '—' : best);
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
-    setText(overlayEl, overlayText(s.status));
+    setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }));
   },
   Math.random,
 );
