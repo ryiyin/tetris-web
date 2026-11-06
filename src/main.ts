@@ -3,7 +3,7 @@ import { hardDrop, restartGame, rotateCurrent, shiftLeft, shiftRight, softDrop, 
 import { BOARD_COLS, BOARD_ROWS, CELL_SIZE } from './game/constants';
 import { createGame, type GameStatus } from './game/game';
 import { attachKeyboard, type KeyAction } from './ui/keyboard';
-import { attachTouchControls, isActionEnabled, pauseButtonLabel } from './ui/touch';
+import { attachTouchControls, buttonAction, isActionEnabled, pauseButtonLabel } from './ui/touch';
 import { drawBoard } from './ui/render';
 import { startLoop } from './ui/loop';
 import { overlayText } from './ui/overlay';
@@ -48,11 +48,13 @@ const controlButtons = Array.from(controlsEl.querySelectorAll<HTMLButtonElement>
 
 // Debe coincidir con la consulta de la botonera en style.css.
 const TOUCH_QUERY = '(pointer: coarse), (hover: none)';
+const touchQuery = window.matchMedia?.(TOUCH_QUERY);
 
 // Actualiza botones (deshabilitado y texto de pausa) solo si cambió el valor.
 function updateControls(status: GameStatus): void {
   for (const button of controlButtons) {
-    const action = button.dataset.action as KeyAction;
+    const action = buttonAction(button.dataset.action);
+    if (action === null) continue;
     const disabled = !isActionEnabled(action, status);
     if (button.disabled !== disabled) button.disabled = disabled;
     if (action === 'pause') {
@@ -96,8 +98,7 @@ const loop = startLoop(
     setText(levelEl, s.level);
     setText(linesEl, s.lines);
     updateControls(s.status);
-    const touch = window.matchMedia?.(TOUCH_QUERY).matches ?? false;
-    setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }, touch));
+    setText(overlayEl, overlayText(s.status, { best, isNew: newRecord }, touchQuery?.matches ?? false));
   },
   Math.random,
 );

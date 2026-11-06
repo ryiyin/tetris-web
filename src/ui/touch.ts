@@ -23,7 +23,7 @@ export function pauseButtonLabel(status: GameStatus): string {
   return status === 'paused' ? 'Continuar' : 'Pausa';
 }
 
-export interface Timers {
+interface Timers {
   setTimeout: (fn: () => void, ms: number) => unknown;
   clearTimeout: (id: unknown) => void;
   setInterval: (fn: () => void, ms: number) => unknown;
@@ -93,6 +93,13 @@ export function attachTouchControls(
     for (const type of ['pointerup', 'pointercancel', 'pointerleave']) {
       button.addEventListener(type, () => repeater.stop());
     }
+    // En pantallas táctiles el puntero queda capturado y pointerleave no se dispara: se comprueba la posición.
+    button.addEventListener('pointermove', (event) => {
+      const r = button.getBoundingClientRect();
+      if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) {
+        repeater.stop();
+      }
+    });
   });
 
   const stopAll = () => repeaters.forEach((r) => r.stop());

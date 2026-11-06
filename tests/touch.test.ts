@@ -49,6 +49,11 @@ describe('createRepeater', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
+  it('usa los tiempos de la spec', () => {
+    expect(REPEAT_DELAY_MS).toBe(170);
+    expect(REPEAT_INTERVAL_MS).toBe(60);
+  });
+
   it('dispara al iniciar, tras el retraso y luego cada intervalo', () => {
     const fire = vi.fn();
     const r = createRepeater(fire, undefined, true);
@@ -161,6 +166,19 @@ describe('attachTouchControls', () => {
     vi.advanceTimersByTime(REPEAT_DELAY_MS);
     expect(actions).toEqual(['left', 'left']);
     btn('left').emit(end);
+    vi.advanceTimersByTime(5000);
+    expect(actions).toEqual(['left', 'left']);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+  it('pointermove fuera del botón detiene la repetición; dentro no', () => {
+    const { btn, actions } = setup();
+    const left = btn('left') as unknown as { getBoundingClientRect: () => unknown };
+    left.getBoundingClientRect = () => ({ left: 10, right: 50, top: 10, bottom: 50 });
+    btn('left').emit('pointerdown', down());
+    btn('left').emit('pointermove', { clientX: 30, clientY: 30 });
+    vi.advanceTimersByTime(REPEAT_DELAY_MS);
+    expect(actions).toEqual(['left', 'left']);
+    btn('left').emit('pointermove', { clientX: 60, clientY: 30 });
     vi.advanceTimersByTime(5000);
     expect(actions).toEqual(['left', 'left']);
     expect(vi.getTimerCount()).toBe(0);
